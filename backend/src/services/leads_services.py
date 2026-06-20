@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from pony.orm import db_session, desc
+from pony.orm import db_session
 
 from src.models import Lead
 from src.schemas import LeadCreate, LeadUpdate
@@ -24,7 +24,7 @@ class LeadsServices:
 
     def get_all_leads(self) -> list[dict]:
         with db_session:
-            leads = Lead.select().order_by(lambda l: desc(l.created_at))[:]
+            leads = Lead.select().order_by(Lead.created_at.desc())[:]
             return [self._to_dict(l) for l in leads]
 
     def get_lead_by_id(self, lead_id: int) -> dict | None:
@@ -45,35 +45,33 @@ class LeadsServices:
 
     def get_metrics(self) -> dict:
         with db_session:
-            leads = Lead.select()[:]
-            total = len(leads)
-            contacted = sum(1 for l in leads if l.contacted)
+            all_leads = Lead.select()[:]
+            total = len(all_leads)
+            contacted = sum(1 for l in all_leads if l.contacted)
 
-            by_niche: dict[str, int] = {}
-            by_situation: dict[str, int] = {}
-            by_revenue: dict[str, int] = {}
-
-            for lead in leads:
-                niche = lead.niche or "Sin nicho"
-                by_niche[niche] = by_niche.get(niche, 0) + 1
-
-                situation = lead.situation or "Sin dato"
-                by_situation[situation] = by_situation.get(situation, 0) + 1
-
-                revenue = lead.revenue or "Sin dato"
-                by_revenue[revenue] = by_revenue.get(revenue, 0) + 1
+            by_niche = {}
+            by_situation = {}
+            by_revenue = {}
 
             today = datetime.utcnow().date()
-            daily = []
-            for i in range(13, -1, -1):
-                day = today - timedelta(days=i)
-                daily.append({"date": day.isoformat(), "count": 0})
+            daily = {
+                (today - timedelta(days=i)).isoformat(): 0
+                for i in range(13, -1, -1)
+            }
 
-            day_index = {entry["date"]: idx for idx, entry in enumerate(daily)}
-            for lead in leads:
-                key = lead.created_at.date().isoformat()
-                if key in day_index:
-                    daily[day_index[key]]["count"] += 1
+            for lead in all_leads:
+                n = lead.niche or "Sin nicho"
+                by_niche[n] = by_niche.get(n, 0) + 1
+
+                s = lead.situation or "Sin dato"
+                by_situation[s] = by_situation.get(s, 0) + 1
+
+                r = lead.revenue or "Sin dato"
+                by_revenue[r] = by_revenue.get(r, 0) + 1
+
+                day_key = lead.created_at.date().isoformat()
+                if day_key in daily:
+                    daily[day_key] += 1
 
             return {
                 "total": total,
@@ -82,7 +80,9 @@ class LeadsServices:
                 "by_niche": by_niche,
                 "by_situation": by_situation,
                 "by_revenue": by_revenue,
-                "daily": daily,
+                "daily": [
+                    {"date": d, "count": c} for d, c in daily.items()
+                ],
             }
 
     def _to_dict(self, lead) -> dict:
