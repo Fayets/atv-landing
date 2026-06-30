@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta
 
 from pony.orm import db_session
@@ -13,10 +14,13 @@ class LeadsServices:
                 name=data.name,
                 email=data.email,
                 phone=data.phone,
-                situation=data.situation,
+                avatar=data.avatar,
+                bottleneck_areas=json.dumps(data.bottleneck_areas or []),
+                bottleneck_marketing=json.dumps(data.bottleneck_marketing or []),
+                bottleneck_ventas=json.dumps(data.bottleneck_ventas or []),
+                bottleneck_producto=json.dumps(data.bottleneck_producto or []),
+                bottleneck_sistemas=json.dumps(data.bottleneck_sistemas or []),
                 revenue=data.revenue,
-                obstacle=data.obstacle,
-                niche=data.niche,
                 created_at=datetime.utcnow(),
                 contacted=False,
             )
@@ -49,8 +53,9 @@ class LeadsServices:
             total = len(all_leads)
             contacted = sum(1 for l in all_leads if l.contacted)
 
-            by_niche = {}
-            by_situation = {}
+            by_avatar = {}
+            by_bottleneck_area = {}
+            by_sub_obstacle = {}
             by_revenue = {}
 
             today = datetime.utcnow().date()
@@ -59,16 +64,34 @@ class LeadsServices:
                 for i in range(13, -1, -1)
             }
 
+            AREA_FIELDS = {
+                "bottleneck_marketing": "Marketing",
+                "bottleneck_ventas": "Ventas",
+                "bottleneck_producto": "Producto",
+                "bottleneck_sistemas": "Sistemas",
+            }
+
             for lead in all_leads:
-                n = lead.niche or "Sin nicho"
-                by_niche[n] = by_niche.get(n, 0) + 1
+                # Por avatar
+                a = lead.avatar or "Sin dato"
+                by_avatar[a] = by_avatar.get(a, 0) + 1
 
-                s = lead.situation or "Sin dato"
-                by_situation[s] = by_situation.get(s, 0) + 1
+                # Por área de cuello de botella (un lead puede sumar a varias áreas)
+                areas = self._deserialize_list(lead.bottleneck_areas)
+                for area in areas:
+                    by_bottleneck_area[area] = by_bottleneck_area.get(area, 0) + 1
 
+                # Por sub-obstáculo específico (de las 4 columnas de área)
+                for field_name in AREA_FIELDS:
+                    sub_opts = self._deserialize_list(getattr(lead, field_name))
+                    for opt in sub_opts:
+                        by_sub_obstacle[opt] = by_sub_obstacle.get(opt, 0) + 1
+
+                # Por facturación (se mantiene igual)
                 r = lead.revenue or "Sin dato"
                 by_revenue[r] = by_revenue.get(r, 0) + 1
 
+                # Diario (se mantiene igual)
                 day_key = lead.created_at.date().isoformat()
                 if day_key in daily:
                     daily[day_key] += 1
@@ -77,13 +100,23 @@ class LeadsServices:
                 "total": total,
                 "contacted": contacted,
                 "pending": total - contacted,
-                "by_niche": by_niche,
-                "by_situation": by_situation,
+                "by_avatar": by_avatar,
+                "by_bottleneck_area": by_bottleneck_area,
+                "by_sub_obstacle": by_sub_obstacle,
                 "by_revenue": by_revenue,
                 "daily": [
                     {"date": d, "count": c} for d, c in daily.items()
                 ],
             }
+
+    def _deserialize_list(self, value: str | None) -> list:
+        if not value:
+            return []
+        try:
+            result = json.loads(value)
+            return result if isinstance(result, list) else []
+        except (json.JSONDecodeError, TypeError):
+            return []
 
     def _to_dict(self, lead) -> dict:
         return {
@@ -91,10 +124,13 @@ class LeadsServices:
             "name": lead.name,
             "email": lead.email,
             "phone": lead.phone,
-            "situation": lead.situation,
+            "avatar": lead.avatar,
+            "bottleneck_areas": self._deserialize_list(lead.bottleneck_areas),
+            "bottleneck_marketing": self._deserialize_list(lead.bottleneck_marketing),
+            "bottleneck_ventas": self._deserialize_list(lead.bottleneck_ventas),
+            "bottleneck_producto": self._deserialize_list(lead.bottleneck_producto),
+            "bottleneck_sistemas": self._deserialize_list(lead.bottleneck_sistemas),
             "revenue": lead.revenue,
-            "obstacle": lead.obstacle,
-            "niche": lead.niche,
             "created_at": lead.created_at.isoformat(),
             "contacted": lead.contacted,
             "notes": lead.notes,

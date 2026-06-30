@@ -11,10 +11,13 @@ class Lead(db.Entity):
     phone        = Required(str)
 
     # Respuestas del quiz
-    situation    = Optional(str)   # P1: situación actual
-    revenue      = Optional(str)   # P2: facturación actual
-    obstacle     = Optional(str)   # P3: mayor obstáculo
-    niche        = Optional(str)   # P4: nicho
+    avatar               = Optional(str)
+    bottleneck_areas     = Optional(str)   # JSON serializado: ["Marketing","Ventas"]
+    bottleneck_marketing = Optional(str)   # JSON serializado: ["...", "..."]
+    bottleneck_ventas    = Optional(str)
+    bottleneck_producto  = Optional(str)
+    bottleneck_sistemas  = Optional(str)
+    revenue              = Optional(str)
 
     # Metadata
     created_at   = Required(datetime, default=datetime.utcnow)
