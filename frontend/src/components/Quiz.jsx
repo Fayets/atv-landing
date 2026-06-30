@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import styles from './Quiz.module.css'
-import { submitLead } from '../api/leads'
+import { submitLead, updateLead } from '../api/leads'
 
 const BOTTLENECK_AREAS = ['Marketing', 'Ventas', 'Producto', 'Sistemas']
 
@@ -54,6 +54,11 @@ const INITIAL_ANSWERS = {
 
 const STEPS = [
   {
+    id: 'contact',
+    q: 'Dejame tus datos y te mando el diagnóstico de escalabilidad',
+    type: 'form',
+  },
+  {
     id: 'avatar',
     q: '¿Cuál de estas opciones describe mejor tu perfil hoy en día?',
     type: 'options',
@@ -84,11 +89,6 @@ const STEPS = [
       '+50k',
     ],
   },
-  {
-    id: 'contact',
-    q: 'Dejame tus datos y te mando el diagnóstico de escalabilidad',
-    type: 'form',
-  },
 ]
 
 function isBottleneckValid(answers) {
@@ -114,12 +114,30 @@ function buildPayload(answers, form) {
   }
 }
 
+function buildQuizUpdatePayload(answers) {
+  return {
+    avatar: answers.avatar,
+    bottleneck_areas: answers.bottleneckAreas,
+    bottleneck_marketing: answers.bottleneckMarketing,
+    bottleneck_ventas: answers.bottleneckVentas,
+    bottleneck_producto: answers.bottleneckProducto,
+    bottleneck_sistemas: answers.bottleneckSistemas,
+    revenue: answers.revenue,
+  }
+}
+
 export default function Quiz({ onComplete }) {
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState(INITIAL_ANSWERS)
   const [form, setForm] = useState({ name: '', email: '', phone: '' })
+  const [leadId, setLeadId] = useState(null)
+  const leadIdRef = useRef(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+
+  useEffect(() => {
+    leadIdRef.current = leadId
+  }, [leadId])
 
   const step = STEPS[current]
   const progress = ((current + 1) / STEPS.length) * 100
@@ -164,19 +182,54 @@ export default function Quiz({ onComplete }) {
   }
 
   const handleNext = async () => {
+    if (step.type === 'form') {
+      submitLead({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+      })
+        .then((res) => {
+          if (res?.id) setLeadId(res.id)
+        })
+        .catch((e) => {
+          console.error('Error al guardar contacto:', e)
+        })
+      setCurrent((c) => c + 1)
+      return
+    }
+
     if (isLast) {
       setLoading(true)
       setError(null)
       try {
         const payload = buildPayload(answers, form)
-        await submitLead(payload)
+
+        // Esperar a que leadId esté disponible, con timeout de seguridad
+        let waitedId = leadId
+        if (!waitedId) {
+          const maxWaitMs = 5000
+          const stepMs = 150
+          let waited = 0
+          while (!waitedId && waited < maxWaitMs) {
+            await new Promise((r) => setTimeout(r, stepMs))
+            waited += stepMs
+            waitedId = leadIdRef.current
+          }
+        }
+
+        if (!waitedId) {
+          throw new Error('No se pudo vincular tu información de contacto. Probá completar el formulario de nuevo.')
+        }
+
+        await updateLead(waitedId, buildQuizUpdatePayload(answers))
         onComplete(payload)
       } catch (e) {
-        setError('Algo falló. Probá de nuevo.')
+        setError(e.message || 'Algo falló. Probá de nuevo.')
         setLoading(false)
       }
       return
     }
+
     setCurrent((c) => c + 1)
   }
 

@@ -45,6 +45,20 @@ class LeadsServices:
                 lead.contacted = data.contacted
             if data.notes is not None:
                 lead.notes = data.notes
+            if data.avatar is not None:
+                lead.avatar = data.avatar
+            if data.bottleneck_areas is not None:
+                lead.bottleneck_areas = json.dumps(data.bottleneck_areas)
+            if data.bottleneck_marketing is not None:
+                lead.bottleneck_marketing = json.dumps(data.bottleneck_marketing)
+            if data.bottleneck_ventas is not None:
+                lead.bottleneck_ventas = json.dumps(data.bottleneck_ventas)
+            if data.bottleneck_producto is not None:
+                lead.bottleneck_producto = json.dumps(data.bottleneck_producto)
+            if data.bottleneck_sistemas is not None:
+                lead.bottleneck_sistemas = json.dumps(data.bottleneck_sistemas)
+            if data.revenue is not None:
+                lead.revenue = data.revenue
             return self._to_dict(lead)
 
     def get_metrics(self) -> dict:
