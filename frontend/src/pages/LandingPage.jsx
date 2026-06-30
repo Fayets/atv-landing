@@ -1,8 +1,60 @@
+import { useState } from 'react'
 import Quiz from '../components/Quiz'
+import Diagnosis from '../components/Diagnosis'
+import QualifyingQuestions from '../components/QualifyingQuestions'
 import InstagramSuccess from '../components/InstagramSuccess'
 import styles from './LandingPage.module.css'
 
+function toDiagnosisAnswers(quizPayload) {
+  return {
+    avatar: quizPayload.avatar,
+    bottleneckAreas: quizPayload.bottleneck_areas || [],
+    bottleneckMarketing: quizPayload.bottleneck_marketing || [],
+    bottleneckVentas: quizPayload.bottleneck_ventas || [],
+    bottleneckProducto: quizPayload.bottleneck_producto || [],
+    bottleneckSistemas: quizPayload.bottleneck_sistemas || [],
+    revenue: quizPayload.revenue,
+  }
+}
+
 export default function LandingPage({ onComplete }) {
+  const [phase, setPhase] = useState('quiz')
+  const [quizAnswers, setQuizAnswers] = useState(null)
+  const [diagnosisText, setDiagnosisText] = useState('')
+
+  const handleQuizComplete = (payload) => {
+    setQuizAnswers(payload)
+    setPhase('diagnosis')
+  }
+
+  const handleDiagnosisContinue = (text) => {
+    setDiagnosisText(text)
+    setPhase('qualifying')
+  }
+
+  const handleQualifyingComplete = (qualifyingData) => {
+    onComplete({
+      ...quizAnswers,
+      diagnosisText,
+      ...qualifyingData,
+    })
+  }
+
+  const renderFlow = () => {
+    if (phase === 'quiz') {
+      return <Quiz onComplete={handleQuizComplete} />
+    }
+    if (phase === 'diagnosis') {
+      return (
+        <Diagnosis
+          answers={toDiagnosisAnswers(quizAnswers)}
+          onContinue={handleDiagnosisContinue}
+        />
+      )
+    }
+    return <QualifyingQuestions onComplete={handleQualifyingComplete} />
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.heroTop}>
@@ -33,7 +85,7 @@ export default function LandingPage({ onComplete }) {
           <span>100% gratis</span>
         </div>
 
-        <Quiz onComplete={onComplete} />
+        {renderFlow()}
       </section>
 
       <div className={styles.stats}>
