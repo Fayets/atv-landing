@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, timedelta
 
-from pony.orm import db_session
+from pony.orm import db_session, flush
 
 from src.models import Lead
 from src.schemas import LeadCreate, LeadUpdate
@@ -34,6 +34,7 @@ class LeadsServices:
                 lead_kwargs["revenue"] = data.revenue
 
             lead = Lead(**lead_kwargs)
+            flush()
             return {"ok": True, "id": lead.id}
 
     def get_all_leads(self) -> list[dict]:
