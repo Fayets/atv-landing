@@ -1,4 +1,4 @@
-const WA_NUMBER = import.meta.env.VITE_WA_NUMBER || '5491112345678'
+const WA_NUMBER = import.meta.env.VITE_WA_NUMBER || '5491162626702'
 
 export function buildWhatsappUrl(data) {
   const msg = encodeURIComponent(

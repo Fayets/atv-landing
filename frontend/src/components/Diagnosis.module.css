@@ -35,7 +35,9 @@
   padding: 24px;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 14px;
+  text-align: left;
 }
 
 .eyebrow {
@@ -58,18 +60,24 @@
   font-weight: 600;
   color: var(--text);
   line-height: 1.45;
+  text-align: left;
+  width: 100%;
 }
 
 .bodyText {
   font-size: 15px;
   color: var(--text);
   line-height: 1.55;
+  text-align: left;
+  width: 100%;
 }
 
 .closing {
   font-size: 15px;
   color: var(--text);
   line-height: 1.55;
+  text-align: left;
+  width: 100%;
 }
 
 .closing em {
@@ -82,6 +90,8 @@
   font-size: 13px;
   color: var(--muted);
   line-height: 1.5;
+  text-align: left;
+  width: 100%;
 }
 
 .footer {

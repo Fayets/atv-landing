@@ -61,7 +61,7 @@ export default function QualifyingQuestions({ onComplete }) {
           onClick={handleSubmit}
           disabled={!canSubmit}
         >
-          <span>Quiero mi diagnóstico de escalabilidad</span>
+          <span>Quiero mi diagnóstico</span>
           <i className="ti ti-arrow-right" />
         </button>
       </div>
