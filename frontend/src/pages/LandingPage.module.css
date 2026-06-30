@@ -18,7 +18,7 @@
 }
 
 .hero {
-  padding: 90px 40px 36px;
+  padding: 148px 40px 36px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -49,7 +49,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin: 0 auto 10px;
+  margin: 0 auto 18px;
 }
 .eyebrow i { font-size: 13px; }
 
@@ -59,7 +59,7 @@
   line-height: 0.92;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  margin-bottom: 10px;
+  margin-bottom: 36px;
   color: var(--text);
   max-width: 900px;
   margin-left: auto;
@@ -72,7 +72,7 @@
   font-weight: 300;
   color: var(--muted);
   max-width: 460px;
-  margin: 0 auto 14px;
+  margin: 0 auto 44px;
   line-height: 1.55;
 }
 
@@ -83,7 +83,7 @@
   gap: 14px;
   font-size: 13px;
   color: var(--muted);
-  margin-bottom: 18px;
+  margin-bottom: 72px;
   flex-wrap: wrap;
 }
 .socialProof strong { color: var(--text); font-weight: 500; }
@@ -187,7 +187,7 @@
   }
 
   .hero {
-    padding: 62px 16px 20px;
+    padding: 96px 16px 20px;
   }
 
   .logo { height: 24px; }
@@ -199,20 +199,20 @@
   }
 
   .eyebrow {
-    margin: 0 auto 8px;
+    margin: 0 auto 12px;
     font-size: 10px;
     padding: 4px 12px;
   }
 
   .headline {
     font-size: clamp(30px, 9vw, 40px);
-    margin-bottom: 8px;
+    margin-bottom: 20px;
     line-height: 0.95;
   }
 
   .sub {
     font-size: 13px;
-    margin-bottom: 10px;
+    margin-bottom: 26px;
     line-height: 1.5;
     max-width: 100%;
   }
@@ -222,7 +222,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    margin-bottom: 12px;
+    margin-bottom: 40px;
     text-align: center;
     font-size: 12px;
   }
