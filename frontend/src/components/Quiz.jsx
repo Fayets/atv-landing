@@ -368,7 +368,7 @@ export default function Quiz({ onComplete }) {
           {loading ? (
             <i className="ti ti-loader-2" style={{ animation: 'spin 1s linear infinite' }} />
           ) : isLast ? (
-            <><span>Quiero mi diagnóstico de escalabilidad</span><i className="ti ti-arrow-right" /></>
+            <><span>Quiero mi diagnóstico</span><i className="ti ti-arrow-right" /></>
           ) : (
             <i className="ti ti-arrow-right" />
           )}
