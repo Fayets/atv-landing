@@ -86,7 +86,7 @@ class LeadsServices:
             "email": lead.email,
             "phone": lead.phone,
             "access_code": lead.access_code,
-            "created_at": lead.created_at.isoformat(),
+            "created_at": f"{lead.created_at.isoformat()}Z",
             "contacted": lead.contacted,
             "notes": lead.notes,
         }

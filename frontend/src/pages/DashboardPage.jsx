@@ -9,15 +9,24 @@ function phoneToWa(phone) {
   return `https://wa.me/${digits}`
 }
 
+function parseUtcDate(iso) {
+  if (!iso) return new Date(NaN)
+  if (iso.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(iso)) return new Date(iso)
+  return new Date(`${iso}Z`)
+}
+
 function formatDateShort(iso) {
-  const d = new Date(iso)
-  const day = String(d.getDate()).padStart(2, '0')
-  const month = String(d.getMonth() + 1).padStart(2, '0')
-  return `${day}/${month}`
+  const d = parseUtcDate(iso)
+  return d.toLocaleDateString('es-AR', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+    day: '2-digit',
+    month: '2-digit',
+  })
 }
 
 function formatDateFull(iso) {
-  return new Date(iso).toLocaleString('es-AR', {
+  return parseUtcDate(iso).toLocaleString('es-AR', {
+    timeZone: 'America/Argentina/Buenos_Aires',
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
