@@ -14,14 +14,15 @@ export default function AccessCodePage({ data }) {
 
   return (
     <div className={styles.page}>
+      <div className={styles.halo} aria-hidden="true" />
       <div className={styles.card}>
         <span className={styles.badge}>ACCESO CONFIRMADO</span>
         <h1 className={styles.title}>
           {name ? `${name.split(' ')[0]}, ya sos parte.` : 'Ya sos parte.'}
         </h1>
         <p className={styles.sub}>
-          Esta es tu clave de acceso personal e intransferible al webinar.
-          Guardala ahora — la vas a necesitar para ingresar.
+          Esta es tu clave de acceso personal e intransferible.
+          Guardala ahora — la vas a necesitar para ingresar al contenido.
         </p>
 
         <div className={styles.codeWrap}>

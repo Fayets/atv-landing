@@ -3,7 +3,7 @@ import { submitLead } from '../api/leads'
 import styles from './LandingPage.module.css'
 
 export default function LandingPage({ onComplete }) {
-  const [step, setStep] = useState('form') // 'form' | 'loading'
+  const [step, setStep] = useState('form')
   const [error, setError] = useState(null)
   const [form, setForm] = useState({ name: '', email: '', phone: '' })
 
@@ -38,13 +38,19 @@ export default function LandingPage({ onComplete }) {
 
   return (
     <div className={styles.page}>
+      <div className={styles.halo} aria-hidden="true" />
+
       {/* HERO */}
       <section className={styles.hero}>
         <div className={styles.heroInner}>
           <span className={styles.badge}>WEBINAR EXCLUSIVO · CUPOS LIMITADOS</span>
+
           <h1 className={styles.headline}>
-            El sistema que usan los vendedores que <span className={styles.accent}>cierran el 80%</span> de sus llamadas
+            El sistema que usan los vendedores que{' '}
+            <span className={styles.accent}>cierran el 80%</span>{' '}
+            de sus llamadas
           </h1>
+
           <p className={styles.sub}>
             Accedé gratis al entrenamiento y recibí tu clave de acceso personalizada.
           </p>
@@ -87,7 +93,7 @@ export default function LandingPage({ onComplete }) {
         </div>
       </section>
 
-      {/* CASOS DE ÉXITO */}
+      {/* SOCIAL PROOF */}
       <section className={styles.social}>
         <p className={styles.socialTitle}>RESULTADOS DE QUIENES YA APLICARON EL MÉTODO</p>
         <div className={styles.socialGrid}>
