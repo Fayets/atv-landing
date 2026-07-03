@@ -9,7 +9,7 @@ class Lead(db.Entity):
     name         = Required(str)
     email        = Required(str)
     phone        = Required(str)
-    access_code  = Required(str)        # Ej: "ATV-7392"
+    access_code  = Required(str, unique=True)  # Ej: "ATV-7392"
     created_at   = Required(datetime, default=datetime.utcnow)
     contacted    = Required(bool, default=False)
     notes        = Optional(str)
