@@ -1,126 +1,110 @@
 import { useState } from 'react'
-import Quiz from '../components/Quiz'
-import Diagnosis from '../components/Diagnosis'
-import QualifyingQuestions from '../components/QualifyingQuestions'
-import InstagramSuccess from '../components/InstagramSuccess'
-import { buildWhatsappUrl } from '../utils/buildWhatsappMessage'
+import { submitLead } from '../api/leads'
 import styles from './LandingPage.module.css'
 
-function toDiagnosisAnswers(quizPayload) {
-  return {
-    avatar: quizPayload.avatar,
-    bottleneckAreas: quizPayload.bottleneck_areas || [],
-    bottleneckMarketing: quizPayload.bottleneck_marketing || [],
-    bottleneckVentas: quizPayload.bottleneck_ventas || [],
-    bottleneckProducto: quizPayload.bottleneck_producto || [],
-    bottleneckSistemas: quizPayload.bottleneck_sistemas || [],
-    revenue: quizPayload.revenue,
-  }
-}
-
 export default function LandingPage({ onComplete }) {
-  const [phase, setPhase] = useState('quiz')
-  const [quizAnswers, setQuizAnswers] = useState(null)
-  const [diagnosisText, setDiagnosisText] = useState('')
+  const [step, setStep] = useState('form') // 'form' | 'loading'
+  const [error, setError] = useState(null)
+  const [form, setForm] = useState({ name: '', email: '', phone: '' })
 
-  const handleQuizComplete = (payload) => {
-    setQuizAnswers(payload)
-    setPhase('diagnosis')
+  const handleChange = (e) => {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  const handleDiagnosisContinue = (text) => {
-    setDiagnosisText(text)
-    setPhase('qualifying')
+  const handleSubmit = async () => {
+    if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) {
+      setError('Completá todos los campos para continuar.')
+      return
+    }
+    setError(null)
+    setStep('loading')
+    try {
+      const result = await submitLead(form)
+      onComplete({ ...form, access_code: result.access_code })
+    } catch {
+      setError('Ocurrió un error. Intentá de nuevo.')
+      setStep('form')
+    }
   }
 
-  const handleQualifyingComplete = (qualifyingData) => {
-    const fullData = {
-      ...quizAnswers,
-      diagnosisText,
-      ...qualifyingData,
-    }
-    window.location.href = buildWhatsappUrl(fullData)
-  }
-
-  const renderFlow = () => {
-    if (phase === 'quiz') {
-      return <Quiz onComplete={handleQuizComplete} />
-    }
-    if (phase === 'diagnosis') {
-      return (
-        <Diagnosis
-          answers={toDiagnosisAnswers(quizAnswers)}
-          onContinue={handleDiagnosisContinue}
-        />
-      )
-    }
-    return <QualifyingQuestions onComplete={handleQualifyingComplete} />
+  if (step === 'loading') {
+    return (
+      <div className={styles.loadingWrap}>
+        <div className={styles.spinner} />
+        <p className={styles.loadingText}>Generando tu acceso exclusivo...</p>
+      </div>
+    )
   }
 
   return (
     <div className={styles.page}>
-      <div className={styles.heroTop}>
-        <img src="/ATVLogin.png" alt="ATV" className={styles.logo} width={28} height={28} />
-      </div>
-
+      {/* HERO */}
       <section className={styles.hero}>
-        <div className={styles.heroBg} />
-        <div className={styles.eyebrow}>
-          <i className="ti ti-bolt" /> Diagnóstico de escalabilidad
-        </div>
-        <h1 className={styles.headline}>
-          Descubrí qué te falta<br />
-          para escalar a <em>6 cifras</em>
-        </h1>
-        <p className={styles.sub}>
-          Respondé 5 preguntas y recibí tu diagnóstico de escalabilidad personalizado. El roadmap concreto para tu situación, sin vueltas.
-        </p>
+        <div className={styles.heroInner}>
+          <span className={styles.badge}>WEBINAR EXCLUSIVO · CUPOS LIMITADOS</span>
+          <h1 className={styles.headline}>
+            El sistema que usan los vendedores que <span className={styles.accent}>cierran el 80%</span> de sus llamadas
+          </h1>
+          <p className={styles.sub}>
+            Accedé gratis al entrenamiento y recibí tu clave de acceso personalizada.
+          </p>
 
-        <div className={styles.socialProof}>
-          <div className={styles.avatars}>
-            {['JC','MA','LS','EM','NI'].map((i, idx) => (
-              <div key={idx} className={`${styles.av} ${idx % 2 === 0 ? styles.avRed : ''}`}>{i}</div>
-            ))}
+          {/* FORM */}
+          <div className={styles.formCard}>
+            <p className={styles.formTitle}>QUIERO MI LUGAR</p>
+            <input
+              className={styles.input}
+              type="text"
+              name="name"
+              placeholder="Tu nombre completo"
+              value={form.name}
+              onChange={handleChange}
+            />
+            <input
+              className={styles.input}
+              type="email"
+              name="email"
+              placeholder="Tu email"
+              value={form.email}
+              onChange={handleChange}
+            />
+            <input
+              className={styles.input}
+              type="tel"
+              name="phone"
+              placeholder="Tu WhatsApp (con código de país)"
+              value={form.phone}
+              onChange={handleChange}
+            />
+            {error && <p className={styles.error}>{error}</p>}
+            <button className={styles.cta} onClick={handleSubmit}>
+              QUIERO MI ACCESO GRATUITO →
+            </button>
+            <p className={styles.disclaimer}>
+              Sin spam. Tu información es 100% segura.
+            </p>
           </div>
-          <span><strong>+1.200</strong> negocios ya lo hicieron</span>
-          <span className={styles.dot} />
-          <span>100% gratis</span>
         </div>
-
-        {renderFlow()}
       </section>
 
-      <div className={styles.stats}>
-        {[
-          { num: '+$5M', label: 'Generados por clientes ATV' },
-          { num: '1.200+', label: 'Negocios escalados' },
-          { num: '92%', label: 'Clientes conformes' },
-        ].map((s) => (
-          <div key={s.num} className={styles.statItem}>
-            <div className={styles.statNum}>{s.num}</div>
-            <div className={styles.statLabel}>{s.label}</div>
+      {/* CASOS DE ÉXITO */}
+      <section className={styles.social}>
+        <p className={styles.socialTitle}>RESULTADOS DE QUIENES YA APLICARON EL MÉTODO</p>
+        <div className={styles.socialGrid}>
+          <div className={styles.caseCard}>
+            <p className={styles.caseText}>"Pasé de cerrar 2 de cada 10 a cerrar 8. En 30 días."</p>
+            <span className={styles.caseName}>— Martín R., consultor</span>
           </div>
-        ))}
-      </div>
-
-      <InstagramSuccess />
-
-      <div className={styles.footerCta}>
-        <h2>¿Listo para escalar?</h2>
-        <p>Hacé el diagnóstico de escalabilidad — es gratis y te lleva menos de 3 minutos</p>
-        <button
-          className={styles.ctaBtn}
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        >
-          <i className="ti ti-bolt" /> Hacer mi diagnóstico de escalabilidad
-        </button>
-      </div>
-
-      <footer className={styles.footer}>
-        <img src="/ATVLogin.png" alt="ATV — Aumenta Tu Valor" className={styles.logo} width={36} height={36} />
-        <span>© 2026 Aumenta Tu Valor · Todos los derechos reservados</span>
-        <span>Privacidad · Términos</span>
-      </footer>
+          <div className={styles.caseCard}>
+            <p className={styles.caseText}>"Nunca pensé que el problema era mi estructura de llamada. Ahora lo veo clarísimo."</p>
+            <span className={styles.caseName}>— Carolina V., coach</span>
+          </div>
+          <div className={styles.caseCard}>
+            <p className={styles.caseText}>"Apliqué lo del webinar al día siguiente y cerré una venta de $3.000 USD."</p>
+            <span className={styles.caseName}>— Diego M., agencia</span>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

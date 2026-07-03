@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import DashboardPage from './pages/DashboardPage'
 import LandingPage from './pages/LandingPage'
-import ThankYouPage from './pages/ThankYouPage'
+import AccessCodePage from './pages/AccessCodePage'
 import ProtectedRoute from './components/ProtectedRoute'
 
 const LEAD_STORAGE_KEY = 'atv_lead'
@@ -18,7 +18,7 @@ function readStoredLead() {
 export default function App() {
   const [path, setPath] = useState(() => window.location.pathname)
   const [leadData, setLeadData] = useState(() => (
-    window.location.pathname === '/gracias' ? readStoredLead() : null
+    window.location.pathname === '/acceso' ? readStoredLead() : null
   ))
 
   useEffect(() => {
@@ -30,14 +30,13 @@ export default function App() {
   const handleComplete = (data) => {
     sessionStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(data))
     setLeadData(data)
-    window.history.pushState({}, '', '/gracias')
-    setPath('/gracias')
+    window.history.pushState({}, '', '/acceso')
+    setPath('/acceso')
   }
 
-  if (path === '/gracias') {
-    return <ThankYouPage data={leadData} />
+  if (path === '/acceso') {
+    return <AccessCodePage data={leadData} />
   }
-
   if (path === '/dashboard') {
     return (
       <ProtectedRoute>
@@ -45,11 +44,9 @@ export default function App() {
       </ProtectedRoute>
     )
   }
-
   if (path === '/') {
     return <LandingPage onComplete={handleComplete} />
   }
-
   window.location.replace('/')
   return null
 }
