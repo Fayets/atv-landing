@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { submitLead } from '../api/leads'
+import PhoneInput from '../components/PhoneInput'
 import styles from './LandingPage.module.css'
 
 export default function LandingPage({ onComplete }) {
@@ -74,13 +75,10 @@ export default function LandingPage({ onComplete }) {
               value={form.email}
               onChange={handleChange}
             />
-            <input
-              className={styles.input}
-              type="tel"
-              name="phone"
-              placeholder="Tu WhatsApp (con código de país)"
+            <PhoneInput
               value={form.phone}
-              onChange={handleChange}
+              onChange={(phone) => setForm((prev) => ({ ...prev, phone }))}
+              placeholder="Tu número de WhatsApp"
             />
             {error && <p className={styles.error}>{error}</p>}
             <button className={styles.cta} onClick={handleSubmit}>

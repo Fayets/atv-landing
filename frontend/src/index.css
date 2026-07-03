@@ -5,11 +5,11 @@
   --border: #2e2e2e;
   --text: #f2f2f0;
   --muted: #9a968d;
-  --red: #b04545;
-  --red-accent: #c85858;
-  --red-dim: rgba(176, 69, 69, 0.08);
-  --red-bright: #c85858;
-  --error: #e05555;
+  --red: #a83636;
+  --red-accent: #cc4040;
+  --red-dim: rgba(168, 54, 54, 0.12);
+  --red-bright: #e04545;
+  --error: #e84848;
   --radius: 8px;
   --font: 'Inter', system-ui, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
