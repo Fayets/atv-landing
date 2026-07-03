@@ -44,7 +44,6 @@
   margin: 0;
 }
 
-/* CÓDIGO */
 .codeWrap {
   width: 100%;
   background: var(--surface);
@@ -70,21 +69,14 @@
   letter-spacing: 0.12em;
 }
 
-/* BOTONES */
-.actions {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-}
-
 .copyBtn {
-  flex: 1;
+  width: 100%;
   background: var(--red);
   border: none;
   color: var(--text);
-  padding: 11px 16px;
+  padding: 13px 16px;
   font-family: var(--font-display);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   letter-spacing: 0.12em;
   cursor: pointer;
   transition: background 0.2s;
@@ -94,101 +86,6 @@
   background: var(--red-accent);
 }
 
-.regenBtn {
-  flex: 1;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 11px 16px;
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.regenBtn:hover:not(:disabled) {
-  border-color: var(--red);
-  color: var(--text);
-}
-
-.regenBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* CONFIRMACIÓN */
-.confirmBox {
-  width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--red-accent);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.confirmText {
-  margin: 0;
-  font-size: 0.82rem;
-  color: var(--text);
-  text-align: left;
-}
-
-.confirmActions {
-  display: flex;
-  gap: 8px;
-}
-
-.confirmBtn {
-  flex: 1;
-  background: var(--red);
-  border: none;
-  color: var(--text);
-  padding: 10px;
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.confirmBtn:hover:not(:disabled) {
-  background: var(--red-accent);
-}
-
-.confirmBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.cancelBtn {
-  flex: 1;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 10px;
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.cancelBtn:hover:not(:disabled) {
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.error {
-  color: var(--red-accent);
-  font-size: 0.82rem;
-  text-align: center;
-  margin: 0;
-}
-
-/* WARNING */
 .warning {
   display: flex;
   align-items: flex-start;

@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { fetchLeads as getLeads, updateLead } from '../api/leads'
 import styles from './DashboardPage.module.css'
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+
 function phoneToWa(phone) {
   const digits = phone.replace(/\D/g, '')
   return `https://wa.me/${digits}`
@@ -71,6 +73,10 @@ export default function DashboardPage() {
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState(null)
   const [noteDraft, setNoteDraft] = useState('')
+  const [regenConfirming, setRegenConfirming] = useState(false)
+  const [regenLoading, setRegenLoading] = useState(false)
+  const [regenError, setRegenError] = useState(null)
+  const [codeCopied, setCodeCopied] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -125,9 +131,45 @@ export default function DashboardPage() {
   const openPanel = (lead) => {
     setSelectedId(lead.id)
     setNoteDraft(lead.notes || '')
+    setRegenConfirming(false)
+    setRegenLoading(false)
+    setRegenError(null)
+    setCodeCopied(false)
   }
 
-  const closePanel = () => setSelectedId(null)
+  const closePanel = () => {
+    setSelectedId(null)
+    setRegenConfirming(false)
+    setRegenLoading(false)
+    setRegenError(null)
+    setCodeCopied(false)
+  }
+
+  const handleCopyCode = () => {
+    if (!selectedLead?.access_code) return
+    navigator.clipboard.writeText(selectedLead.access_code)
+    setCodeCopied(true)
+    setTimeout(() => setCodeCopied(false), 2000)
+  }
+
+  const handleConfirmRegenerar = async () => {
+    if (!selectedLead) return
+    setRegenLoading(true)
+    setRegenError(null)
+    try {
+      const res = await fetch(`${API_BASE}/leads/${selectedLead.id}/regenerar-codigo`, {
+        method: 'POST',
+      })
+      if (!res.ok) throw new Error('No se pudo regenerar la clave')
+      const updated = await res.json()
+      setLeads((prev) => prev.map((l) => (l.id === updated.id ? updated : l)))
+      setRegenConfirming(false)
+    } catch {
+      setRegenError('No se pudo regenerar la clave. Intentá de nuevo.')
+    } finally {
+      setRegenLoading(false)
+    }
+  }
 
   const saveNote = async () => {
     if (!selectedLead) return
@@ -319,6 +361,48 @@ export default function DashboardPage() {
             <section className={styles.panelSection}>
               <h3 className={styles.panelSectionTitle}>Clave de acceso</h3>
               <div className={styles.panelAccessCode}>{selectedLead.access_code}</div>
+              <div className={styles.codeActions}>
+                <button type="button" className={styles.btnCopyCode} onClick={handleCopyCode}>
+                  {codeCopied ? '✓ COPIADO' : 'COPIAR'}
+                </button>
+                <button
+                  type="button"
+                  className={styles.btnRegenCode}
+                  onClick={() => setRegenConfirming(true)}
+                  disabled={regenLoading || regenConfirming}
+                >
+                  ↺ REGENERAR
+                </button>
+              </div>
+              {regenConfirming && (
+                <div className={styles.regenConfirmBox}>
+                  <p className={styles.regenConfirmText}>
+                    ¿Confirmar? La clave anterior quedará inválida.
+                  </p>
+                  <div className={styles.regenConfirmActions}>
+                    <button
+                      type="button"
+                      className={styles.btnRegenConfirm}
+                      onClick={handleConfirmRegenerar}
+                      disabled={regenLoading}
+                    >
+                      {regenLoading ? 'GENERANDO...' : 'CONFIRMAR'}
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.btnRegenCancel}
+                      onClick={() => {
+                        setRegenConfirming(false)
+                        setRegenError(null)
+                      }}
+                      disabled={regenLoading}
+                    >
+                      CANCELAR
+                    </button>
+                  </div>
+                </div>
+              )}
+              {regenError && <p className={styles.regenError}>{regenError}</p>}
             </section>
 
             <section className={styles.panelSection}>

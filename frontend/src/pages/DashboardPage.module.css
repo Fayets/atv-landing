@@ -392,6 +392,115 @@
   border-radius: 8px;
   padding: 14px 16px;
   text-align: center;
+  margin-bottom: 10px;
+}
+
+.codeActions {
+  display: flex;
+  gap: 8px;
+}
+
+.btnCopyCode,
+.btnRegenCode {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.btnCopyCode {
+  background: #980000;
+  border: 0.5px solid #980000;
+  color: #f0ede8;
+}
+
+.btnCopyCode:hover {
+  background: #c0000a;
+}
+
+.btnRegenCode {
+  background: transparent;
+  border: 0.5px solid #1e1e1e;
+  color: #6b6560;
+}
+
+.btnRegenCode:hover:not(:disabled) {
+  border-color: #980000;
+  color: #f0ede8;
+}
+
+.btnRegenCode:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.regenConfirmBox {
+  margin-top: 12px;
+  padding: 12px;
+  background: #181818;
+  border: 0.5px solid #1e1e1e;
+  border-left: 3px solid #c0000a;
+  border-radius: 6px;
+}
+
+.regenConfirmText {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: #f0ede8;
+  line-height: 1.4;
+}
+
+.regenConfirmActions {
+  display: flex;
+  gap: 8px;
+}
+
+.btnRegenConfirm,
+.btnRegenCancel {
+  flex: 1;
+  padding: 9px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btnRegenConfirm {
+  background: #980000;
+  border: 0.5px solid #980000;
+  color: #f0ede8;
+}
+
+.btnRegenConfirm:hover:not(:disabled) {
+  background: #c0000a;
+}
+
+.btnRegenConfirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnRegenCancel {
+  background: transparent;
+  border: 0.5px solid #1e1e1e;
+  color: #6b6560;
+}
+
+.btnRegenCancel:hover:not(:disabled) {
+  color: #f0ede8;
+}
+
+.regenError {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--red-accent);
 }
 
 .panelMeta {

@@ -1,43 +1,15 @@
 import { useState } from 'react'
-import { regenerarCodigo } from '../api/leads'
 import styles from './AccessCodePage.module.css'
 
-export default function AccessCodePage({ data, onCodeUpdate }) {
-  const [code, setCode] = useState(data?.access_code || '---')
+export default function AccessCodePage({ data }) {
   const [copied, setCopied] = useState(false)
-  const [confirming, setConfirming] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const code = data?.access_code || '---'
   const name = data?.name || ''
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
-  }
-
-  const handleRegenerarClick = () => {
-    setConfirming(true)
-  }
-
-  const handleConfirmar = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const result = await regenerarCodigo(data.id)
-      setCode(result.access_code)
-      if (onCodeUpdate) onCodeUpdate(result.access_code)
-      setConfirming(false)
-    } catch {
-      setError('No se pudo regenerar la clave. Intentá de nuevo.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleCancelar = () => {
-    setConfirming(false)
-    setError(null)
   }
 
   return (
@@ -55,45 +27,9 @@ export default function AccessCodePage({ data, onCodeUpdate }) {
         <div className={styles.codeWrap}>
           <span className={styles.codeLabel}>TU CLAVE DE ACCESO</span>
           <div className={styles.code}>{code}</div>
-
-          <div className={styles.actions}>
-            <button className={styles.copyBtn} onClick={handleCopy}>
-              {copied ? '✓ COPIADO' : 'COPIAR CLAVE'}
-            </button>
-            <button
-              className={styles.regenBtn}
-              onClick={handleRegenerarClick}
-              disabled={loading || confirming}
-            >
-              ↺ CAMBIAR CLAVE
-            </button>
-          </div>
-
-          {confirming && (
-            <div className={styles.confirmBox}>
-              <p className={styles.confirmText}>
-                ¿Seguro? Tu clave anterior quedará inválida.
-              </p>
-              <div className={styles.confirmActions}>
-                <button
-                  className={styles.confirmBtn}
-                  onClick={handleConfirmar}
-                  disabled={loading}
-                >
-                  {loading ? 'GENERANDO...' : 'SÍ, CAMBIAR'}
-                </button>
-                <button
-                  className={styles.cancelBtn}
-                  onClick={handleCancelar}
-                  disabled={loading}
-                >
-                  CANCELAR
-                </button>
-              </div>
-            </div>
-          )}
-
-          {error && <p className={styles.error}>{error}</p>}
+          <button className={styles.copyBtn} onClick={handleCopy}>
+            {copied ? '✓ COPIADO' : 'COPIAR CLAVE'}
+          </button>
         </div>
 
         <div className={styles.warning}>
