@@ -20,7 +20,7 @@ export default function LandingPage({ onComplete }) {
     setStep('loading')
     try {
       const result = await submitLead(form)
-      onComplete({ ...form, access_code: result.access_code })
+      onComplete({ ...form, access_code: result.access_code, id: result.id })
     } catch {
       setError('Ocurrió un error. Intentá de nuevo.')
       setStep('form')

@@ -34,8 +34,16 @@ export default function App() {
     setPath('/acceso')
   }
 
+  const handleCodeUpdate = (accessCode) => {
+    setLeadData((prev) => {
+      const updated = { ...prev, access_code: accessCode }
+      sessionStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(updated))
+      return updated
+    })
+  }
+
   if (path === '/acceso') {
-    return <AccessCodePage data={leadData} />
+    return <AccessCodePage data={leadData} onCodeUpdate={handleCodeUpdate} />
   }
   if (path === '/dashboard') {
     return (

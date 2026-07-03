@@ -62,6 +62,15 @@ class LeadsServices:
                 lead.notes = data.notes
             return self._to_dict(lead)
 
+    def regenerar_codigo(self, lead_id: int) -> dict | None:
+        nuevo_codigo = self._unique_code()
+        with db_session:
+            lead = Lead.get(id=lead_id)
+            if not lead:
+                return None
+            lead.access_code = nuevo_codigo
+            return self._to_dict(lead)
+
     def _to_dict(self, lead) -> dict:
         return {
             "id": lead.id,

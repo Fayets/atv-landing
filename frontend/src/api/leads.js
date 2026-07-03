@@ -25,3 +25,11 @@ export async function updateLead(id, data) {
   if (!res.ok) throw new Error('No se pudo actualizar')
   return res.json()
 }
+
+export async function regenerarCodigo(id) {
+  const res = await fetch(`${API_BASE}/leads/${id}/regenerar-codigo`, {
+    method: 'POST',
+  })
+  if (!res.ok) throw new Error('No se pudo regenerar la clave')
+  return res.json()
+}

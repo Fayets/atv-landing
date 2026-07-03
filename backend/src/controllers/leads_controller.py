@@ -38,3 +38,11 @@ def update_lead(lead_id: int, data: LeadUpdate):
     if not lead:
         raise HTTPException(status_code=404, detail="Lead no encontrado")
     return lead
+
+
+@router.post("/{lead_id}/regenerar-codigo")
+def regenerar_codigo(lead_id: int):
+    lead = svc.regenerar_codigo(lead_id)
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead no encontrado")
+    return lead
