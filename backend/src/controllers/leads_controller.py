@@ -46,3 +46,11 @@ def regenerar_codigo(lead_id: int):
     if not lead:
         raise HTTPException(status_code=404, detail="Lead no encontrado")
     return lead
+
+
+@router.delete("/{lead_id}")
+def delete_lead(lead_id: int):
+    ok = svc.delete_lead(lead_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Lead no encontrado")
+    return {"ok": True}

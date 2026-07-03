@@ -33,3 +33,11 @@ export async function regenerarCodigo(id) {
   if (!res.ok) throw new Error('No se pudo regenerar la clave')
   return res.json()
 }
+
+export async function deleteLead(id) {
+  const res = await fetch(`${API_BASE}/leads/${id}`, {
+    method: 'DELETE',
+  })
+  if (!res.ok) throw new Error('No se pudo eliminar el registrado')
+  return res.json()
+}

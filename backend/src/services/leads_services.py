@@ -71,6 +71,14 @@ class LeadsServices:
             lead.access_code = nuevo_codigo
             return self._to_dict(lead)
 
+    def delete_lead(self, lead_id: int) -> bool:
+        with db_session:
+            lead = Lead.get(id=lead_id)
+            if not lead:
+                return False
+            lead.delete()
+            return True
+
     def _to_dict(self, lead) -> dict:
         return {
             "id": lead.id,

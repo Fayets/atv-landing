@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { fetchLeads as getLeads, updateLead } from '../api/leads'
+import { fetchLeads as getLeads, updateLead, deleteLead } from '../api/leads'
 import styles from './DashboardPage.module.css'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
@@ -77,6 +77,9 @@ export default function DashboardPage() {
   const [regenLoading, setRegenLoading] = useState(false)
   const [regenError, setRegenError] = useState(null)
   const [codeCopied, setCodeCopied] = useState(false)
+  const [deleteConfirming, setDeleteConfirming] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState(null)
 
   useEffect(() => {
     let cancelled = false
@@ -135,6 +138,9 @@ export default function DashboardPage() {
     setRegenLoading(false)
     setRegenError(null)
     setCodeCopied(false)
+    setDeleteConfirming(false)
+    setDeleteLoading(false)
+    setDeleteError(null)
   }
 
   const closePanel = () => {
@@ -143,6 +149,9 @@ export default function DashboardPage() {
     setRegenLoading(false)
     setRegenError(null)
     setCodeCopied(false)
+    setDeleteConfirming(false)
+    setDeleteLoading(false)
+    setDeleteError(null)
   }
 
   const handleCopyCode = () => {
@@ -178,6 +187,21 @@ export default function DashboardPage() {
       setLeads((prev) => prev.map((l) => (l.id === selectedLead.id ? updated : l)))
     } catch {
       // keep current state on error
+    }
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!selectedLead) return
+    setDeleteLoading(true)
+    setDeleteError(null)
+    try {
+      await deleteLead(selectedLead.id)
+      setLeads((prev) => prev.filter((l) => l.id !== selectedLead.id))
+      closePanel()
+    } catch {
+      setDeleteError('No se pudo eliminar el registrado. Intentá de nuevo.')
+    } finally {
+      setDeleteLoading(false)
     }
   }
 
@@ -360,49 +384,51 @@ export default function DashboardPage() {
 
             <section className={styles.panelSection}>
               <h3 className={styles.panelSectionTitle}>Clave de acceso</h3>
-              <div className={styles.panelAccessCode}>{selectedLead.access_code}</div>
-              <div className={styles.codeActions}>
-                <button type="button" className={styles.btnCopyCode} onClick={handleCopyCode}>
-                  {codeCopied ? '✓ COPIADO' : 'COPIAR'}
-                </button>
-                <button
-                  type="button"
-                  className={styles.btnRegenCode}
-                  onClick={() => setRegenConfirming(true)}
-                  disabled={regenLoading || regenConfirming}
-                >
-                  ↺ REGENERAR
-                </button>
-              </div>
-              {regenConfirming && (
-                <div className={styles.regenConfirmBox}>
-                  <p className={styles.regenConfirmText}>
-                    ¿Confirmar? La clave anterior quedará inválida.
-                  </p>
-                  <div className={styles.regenConfirmActions}>
-                    <button
-                      type="button"
-                      className={styles.btnRegenConfirm}
-                      onClick={handleConfirmRegenerar}
-                      disabled={regenLoading}
-                    >
-                      {regenLoading ? 'GENERANDO...' : 'CONFIRMAR'}
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.btnRegenCancel}
-                      onClick={() => {
-                        setRegenConfirming(false)
-                        setRegenError(null)
-                      }}
-                      disabled={regenLoading}
-                    >
-                      CANCELAR
-                    </button>
-                  </div>
+              <div className={styles.panelCodeBlock}>
+                <div className={styles.panelAccessCode}>{selectedLead.access_code}</div>
+                <div className={styles.codeActions}>
+                  <button type="button" className={styles.btnCopyCode} onClick={handleCopyCode}>
+                    {codeCopied ? '✓ COPIADO' : 'COPIAR'}
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.btnRegenCode}
+                    onClick={() => setRegenConfirming(true)}
+                    disabled={regenLoading || regenConfirming}
+                  >
+                    ↺ REGENERAR
+                  </button>
                 </div>
-              )}
-              {regenError && <p className={styles.regenError}>{regenError}</p>}
+                {regenConfirming && (
+                  <div className={styles.regenConfirmBox}>
+                    <p className={styles.regenConfirmText}>
+                      ¿Confirmar? La clave anterior quedará inválida.
+                    </p>
+                    <div className={styles.regenConfirmActions}>
+                      <button
+                        type="button"
+                        className={styles.btnRegenConfirm}
+                        onClick={handleConfirmRegenerar}
+                        disabled={regenLoading}
+                      >
+                        {regenLoading ? 'GENERANDO...' : 'CONFIRMAR'}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.btnRegenCancel}
+                        onClick={() => {
+                          setRegenConfirming(false)
+                          setRegenError(null)
+                        }}
+                        disabled={regenLoading}
+                      >
+                        CANCELAR
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {regenError && <p className={styles.regenError}>{regenError}</p>}
+              </div>
             </section>
 
             <section className={styles.panelSection}>
@@ -431,6 +457,49 @@ export default function DashboardPage() {
               <button type="button" className={styles.btnSaveNote} onClick={saveNote}>
                 Guardar nota
               </button>
+            </section>
+
+            <section className={styles.panelSection}>
+              <h3 className={styles.panelSectionTitle}>Eliminar registrado</h3>
+              {!deleteConfirming ? (
+                <button
+                  type="button"
+                  className={styles.btnDeleteLead}
+                  onClick={() => setDeleteConfirming(true)}
+                  disabled={deleteLoading}
+                >
+                  <i className="ti ti-trash" />
+                  ELIMINAR REGISTRO
+                </button>
+              ) : (
+                <div className={styles.deleteConfirmBox}>
+                  <p className={styles.deleteConfirmText}>
+                    ¿Eliminar a {selectedLead.name}? Esta acción no se puede deshacer.
+                  </p>
+                  <div className={styles.deleteConfirmActions}>
+                    <button
+                      type="button"
+                      className={styles.btnDeleteConfirm}
+                      onClick={handleConfirmDelete}
+                      disabled={deleteLoading}
+                    >
+                      {deleteLoading ? 'ELIMINANDO...' : 'SÍ, ELIMINAR'}
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.btnDeleteCancel}
+                      onClick={() => {
+                        setDeleteConfirming(false)
+                        setDeleteError(null)
+                      }}
+                      disabled={deleteLoading}
+                    >
+                      CANCELAR
+                    </button>
+                  </div>
+                </div>
+              )}
+              {deleteError && <p className={styles.deleteError}>{deleteError}</p>}
             </section>
           </aside>
         </>
