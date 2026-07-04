@@ -44,16 +44,24 @@ export default function LandingPage({ onComplete }) {
       {/* HERO */}
       <section className={styles.hero}>
         <div className={styles.heroInner}>
-          <span className={styles.badge}>WEBINAR EXCLUSIVO · CUPOS LIMITADOS</span>
+          <span className={styles.badge}>
+            <span className={styles.badgeDot} aria-hidden="true" />
+            ACCESO GRATUITO
+            <span className={styles.badgeSep} aria-hidden="true">·</span>
+            CLAVE PERSONAL DE ACCESO
+          </span>
 
           <h1 className={styles.headline}>
-            El sistema que usan los vendedores que{' '}
-            <span className={styles.accent}>cierran el 80%</span>{' '}
-            de sus llamadas
+            Escalé a +$170k/mes únicamente en orgánico
+            <br />
+            subiendo <span className={styles.accent}>6 piezas de contenido al mes.</span>
+            <br />
+            Te muestro el sistema que me lo permitió.
           </h1>
 
           <p className={styles.sub}>
-            Accedé gratis al entrenamiento y recibí tu clave de acceso personalizada.
+            Lo que estás por ver me costó años, mucho dinero y errores que no tenés que repetir.
+            Completá tus datos y accedé gratis — tu clave es única, intransferible y tiene cupos limitados.
           </p>
 
           {/* FORM */}
@@ -87,25 +95,6 @@ export default function LandingPage({ onComplete }) {
             <p className={styles.disclaimer}>
               Sin spam. Tu información es 100% segura.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* SOCIAL PROOF */}
-      <section className={styles.social}>
-        <p className={styles.socialTitle}>RESULTADOS DE QUIENES YA APLICARON EL MÉTODO</p>
-        <div className={styles.socialGrid}>
-          <div className={styles.caseCard}>
-            <p className={styles.caseText}>"Pasé de cerrar 2 de cada 10 a cerrar 8. En 30 días."</p>
-            <span className={styles.caseName}>— Martín R., consultor</span>
-          </div>
-          <div className={styles.caseCard}>
-            <p className={styles.caseText}>"Nunca pensé que el problema era mi estructura de llamada. Ahora lo veo clarísimo."</p>
-            <span className={styles.caseName}>— Carolina V., coach</span>
-          </div>
-          <div className={styles.caseCard}>
-            <p className={styles.caseText}>"Apliqué lo del webinar al día siguiente y cerré una venta de $3.000 USD."</p>
-            <span className={styles.caseName}>— Diego M., agencia</span>
           </div>
         </div>
       </section>

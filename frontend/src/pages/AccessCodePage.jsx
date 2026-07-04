@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import styles from './AccessCodePage.module.css'
 
+const WEBINAR_URL = import.meta.env.VITE_WEBINAR_URL || 'https://webinar.atvos.io'
+
 export default function AccessCodePage({ data }) {
   const [copied, setCopied] = useState(false)
   const code = data?.access_code || '---'
@@ -21,8 +23,7 @@ export default function AccessCodePage({ data }) {
           {name ? `${name.split(' ')[0]}, ya sos parte.` : 'Ya sos parte.'}
         </h1>
         <p className={styles.sub}>
-          Esta es tu clave de acceso personal e intransferible.
-          Guardala ahora — la vas a necesitar para ingresar al contenido.
+          Copiá y guardá tu clave — es personal e intransferible, y la vas a necesitar para ingresar al contenido.
         </p>
 
         <div className={styles.codeWrap}>
@@ -33,14 +34,15 @@ export default function AccessCodePage({ data }) {
           </button>
         </div>
 
-        <div className={styles.warning}>
-          <span className={styles.warningIcon}>⚠</span>
-          <p>Esta clave es única y personal. No la compartás — cada acceso es individual y será verificado.</p>
-        </div>
-
-        <p className={styles.next}>
-          Vas a recibir un email con el link de acceso y los detalles del webinar.
-        </p>
+        <a className={styles.accederBtn} href={WEBINAR_URL}>
+          <span className={styles.accederEyebrow}>Siguiente paso</span>
+          <span className={styles.accederMain}>
+            Acceder al contenido
+            <svg className={styles.accederIcon} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        </a>
       </div>
     </div>
   )
