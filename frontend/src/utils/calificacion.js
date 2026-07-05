@@ -8,7 +8,7 @@ export function esCalificado(data) {
   const REVENUE_CAL = ['10k a 30k', '30k a 50k', '+50k']
   const SUB_CAL = {
     bottleneck_marketing: [
-      'Mis leads son de mala calidad/no califican',
+      'Mis leads son de mala calidad / no califican',
       'Dependo de anuncios y mi orgánico no funciona',
       'No tengo métricas claras de mi negocio',
     ],
@@ -17,7 +17,6 @@ export function esCalificado(data) {
       'Mi tasa de show up rate es baja',
       'No tengo un proceso de ventas claro',
       'Tengo una tasa de agenda baja',
-      'Dependo de referidos',
       'No tengo métricas claras de mi negocio',
     ],
     bottleneck_producto: [
@@ -28,13 +27,20 @@ export function esCalificado(data) {
     ],
   }
 
-  if (!AVATARES_CAL.includes(data.avatar)) return false
-  if (!REVENUE_CAL.includes(data.revenue)) return false
+  let puntos = 0
 
+  // Punto 1: Avatar
+  if (AVATARES_CAL.includes(data.avatar)) puntos++
+
+  // Punto 2: Revenue
+  if (REVENUE_CAL.includes(data.revenue)) puntos++
+
+  // Punto 3: Al menos un sub-obstáculo verde
   const tieneSubCal = Object.entries(SUB_CAL).some(([key, opts]) => {
     const selected = data[key] || []
     return selected.some(opt => opts.includes(opt))
   })
+  if (tieneSubCal) puntos++
 
-  return tieneSubCal
+  return puntos >= 2
 }
