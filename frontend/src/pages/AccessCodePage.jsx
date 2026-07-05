@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react'
 import { buildWhatsappUrl } from '../utils/buildWhatsappMessage'
 import styles from './AccessCodePage.module.css'
 
+const COUNTDOWN_SECONDS = 10
+
 export default function AccessCodePage({ data, calificado }) {
   const [copied, setCopied] = useState(false)
-  const [countdown, setCountdown] = useState(10)
+  const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS)
   const code = data?.access_code || '---'
   const name = data?.name || ''
   const waUrl = buildWhatsappUrl(data || {})
+  const progress = ((COUNTDOWN_SECONDS - countdown) / COUNTDOWN_SECONDS) * 100
 
   useEffect(() => {
     if (countdown <= 0) {
@@ -45,28 +48,33 @@ export default function AccessCodePage({ data, calificado }) {
           </button>
         </div>
 
-        <div className={styles.nextStep}>
-          <span className={styles.nextLabel}>SIGUIENTE PASO</span>
-          <a href={waUrl} className={styles.nextLink}>
-            Acceder al contenido →
-          </a>
-        </div>
-
         <div className={styles.countdown}>
-          <div className={styles.countdownCircle}>
-            <span className={styles.countdownNum}>{countdown}</span>
-          </div>
-          <p className={styles.countdownText}>
-            Te redirigimos a WhatsApp en {countdown} segundos para confirmar tu acceso.
-          </p>
-          <a href={waUrl} className={styles.waBtn}>
-            🟢 Ir a WhatsApp ahora
-          </a>
-        </div>
+          <span className={styles.countdownLabel}>CONFIRMÁ TU ACCESO</span>
 
-        <div className={styles.warning}>
-          <span className={styles.warningIcon}>⚠</span>
-          <p>Esta clave es única y personal. No la compartás.</p>
+          <div className={styles.timerWrap} aria-live="polite">
+            <svg className={styles.timerRing} viewBox="0 0 44 44" aria-hidden="true">
+              <circle className={styles.timerTrack} cx="22" cy="22" r="18" />
+              <circle
+                className={styles.timerProgress}
+                cx="22"
+                cy="22"
+                r="18"
+                style={{ strokeDashoffset: `${113 - (113 * progress) / 100}` }}
+              />
+            </svg>
+            <span className={styles.timerValue}>{countdown > 0 ? countdown : '…'}</span>
+          </div>
+
+          <p className={styles.countdownText}>
+            {countdown > 0
+              ? `Te redirigimos a WhatsApp en ${countdown} segundo${countdown === 1 ? '' : 's'} para confirmar tu acceso.`
+              : 'Abriendo WhatsApp...'}
+          </p>
+
+          <a href={waUrl} className={styles.waBtn}>
+            <i className="ti ti-brand-whatsapp" aria-hidden="true" />
+            Ir a WhatsApp ahora
+          </a>
         </div>
       </div>
     </div>
