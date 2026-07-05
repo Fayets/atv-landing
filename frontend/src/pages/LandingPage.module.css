@@ -114,7 +114,205 @@
   color: var(--muted);
   text-align: center;
   text-transform: uppercase;
-  margin: 0 0 4px;
+  margin: 0;
+}
+
+.formHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.stepLabel {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin: 0;
+}
+
+.question {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.progressWrap {
+  height: 2px;
+  background: var(--border);
+  margin: 4px 0 8px;
+}
+
+.progressBar {
+  height: 2px;
+  background: var(--red-accent);
+  transition: width 0.35s ease;
+}
+
+.formBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.formFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.backBtn {
+  align-self: flex-start;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.backBtn:hover {
+  color: var(--text);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.opt {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.88rem;
+  text-align: left;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.opt:hover {
+  border-color: var(--red);
+  background: var(--red-dim);
+}
+
+.optSelected {
+  border-color: var(--red);
+  background: var(--red-dim);
+}
+
+.bottleneck {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkOpt {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 0.86rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.checkOpt:hover {
+  border-color: var(--red);
+}
+
+.checkSelected {
+  border-color: var(--red);
+  background: var(--red-dim);
+}
+
+.checkInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.checkBox {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  position: relative;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.checkSelected .checkBox {
+  background: var(--red);
+  border-color: var(--red);
+}
+
+.checkSelected .checkBox::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.subBlock {
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subBlockTitle {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--red-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.cta:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.cta:disabled:hover {
+  background: var(--red);
 }
 
 .input {

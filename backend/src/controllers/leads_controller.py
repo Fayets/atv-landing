@@ -16,6 +16,11 @@ def get_all_leads():
     return svc.get_all_leads()
 
 
+@router.get("/metrics")
+def get_metrics():
+    return svc.get_metrics()
+
+
 @router.get("/verify/{code}")
 def verify_code(code: str):
     lead = svc.verify_code(code)

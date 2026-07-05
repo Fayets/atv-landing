@@ -88,6 +88,201 @@
   color: #c0000a;
 }
 
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 14px;
+}
+
+.chartCardDaily {
+  grid-row: span 2;
+}
+
+.chartCard {
+  background: #111111;
+  border: 0.5px solid #1e1e1e;
+  border-radius: 12px;
+  padding: 18px 20px;
+  min-width: 0;
+}
+
+.chartTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  margin-bottom: 16px;
+  color: #f0ede8;
+}
+
+.barChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 140px;
+}
+
+.barCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.barTrack {
+  width: 100%;
+  height: 110px;
+  background: #181818;
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.barFill {
+  width: 100%;
+  min-height: 2px;
+  background: #980000;
+  border-radius: 4px 4px 0 0;
+}
+
+.barLabel {
+  font-size: 10px;
+  color: #6b6560;
+  white-space: nowrap;
+}
+
+.hBarList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hBarRow {
+  display: grid;
+  grid-template-columns: 1fr 60px 20px;
+  align-items: center;
+  gap: 8px;
+}
+
+.hBarLabel {
+  font-size: 13px;
+  color: #f0ede8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hBarTrack {
+  width: 60px;
+  height: 6px;
+  background: #181818;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.hBarFill {
+  height: 100%;
+  background: #980000;
+  border-radius: 3px;
+}
+
+.hBarValue {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  color: #6b6560;
+  text-align: right;
+}
+
+.select {
+  height: 38px;
+  padding: 0 12px;
+  background: #111111;
+  border: 0.5px solid #1e1e1e;
+  border-radius: 8px;
+  color: #f0ede8;
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.nicheBadge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: #3d0000;
+  color: #ff8888;
+  font-size: 12px;
+  white-space: nowrap;
+  border: 0.5px solid #980000;
+}
+
+.areaBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 180px;
+}
+
+.quizField {
+  margin-bottom: 10px;
+}
+
+.quizLabel {
+  display: block;
+  font-size: 13px;
+  color: #6b6560;
+  margin-bottom: 4px;
+}
+
+.quizValue {
+  background: #181818;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 15px;
+  color: #f0ede8;
+}
+
+.bottleneckBlock {
+  margin-bottom: 14px;
+}
+
+.bottleneckBlock:last-child {
+  margin-bottom: 0;
+}
+
+.bottleneckAreaTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f0ede8;
+  margin-bottom: 6px;
+}
+
+.bottleneckSubList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bottleneckSubItem {
+  position: relative;
+  padding-left: 14px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #6b6560;
+  line-height: 1.4;
+}
+
+.bottleneckSubItem::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #980000;
+}
+
 .toolbar {
   display: flex;
   align-items: center;
@@ -644,6 +839,14 @@
   .metricsGrid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .chartCardDaily {
+    grid-row: auto;
+  }
 }
 
 @media (max-width: 720px) {
@@ -670,5 +873,9 @@
   .searchWrap {
     min-width: 0;
     width: 100%;
+  }
+
+  .select {
+    flex: 1;
   }
 }

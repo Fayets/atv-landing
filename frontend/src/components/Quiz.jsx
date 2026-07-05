@@ -1,56 +1,14 @@
 import { useState, useRef, useEffect } from 'react'
 import styles from './Quiz.module.css'
 import { submitLead, updateLead } from '../api/leads'
-
-const BOTTLENECK_AREAS = ['Marketing', 'Ventas', 'Producto', 'Sistemas']
-
-const BOTTLENECK_SUB_OPTS = {
-  Marketing: [
-    'No genero suficientes leads',
-    'Mis leads son de mala calidad / no califican',
-    'No tengo contenido que convierta',
-    'No sé cómo monetizar mi audiencia',
-    'Mi costo por lead es muy alto',
-  ],
-  Ventas: [
-    'No cierro suficientes llamadas',
-    'Mi tasa de show-up es baja',
-    'No tengo un proceso de seguimiento claro',
-    'No sé manejar objeciones de precio',
-    'Mis setters no agendan suficiente',
-  ],
-  Producto: [
-    'Mis clientes no obtienen resultados',
-    'Tasa de refund alta',
-    'Mi oferta no está bien definida',
-    'No sé cómo subir mis precios',
-    'El producto depende demasiado de mí',
-  ],
-  Sistemas: [
-    'Todo pasa por mí, no puedo delegar',
-    'No tengo procesos documentados',
-    'Mi equipo no rinde sin supervisión constante',
-    'No tengo métricas claras de mi negocio',
-    'No puedo escalar sin contratar más gente',
-  ],
-}
-
-const AREA_TO_ANSWER_KEY = {
-  Marketing: 'bottleneckMarketing',
-  Ventas: 'bottleneckVentas',
-  Producto: 'bottleneckProducto',
-  Sistemas: 'bottleneckSistemas',
-}
-
-const INITIAL_ANSWERS = {
-  avatar: '',
-  bottleneckAreas: [],
-  bottleneckMarketing: [],
-  bottleneckVentas: [],
-  bottleneckProducto: [],
-  bottleneckSistemas: [],
-  revenue: '',
-}
+import {
+  AREA_TO_ANSWER_KEY,
+  BOTTLENECK_AREAS,
+  BOTTLENECK_SUB_OPTS,
+  buildQuizUpdatePayload,
+  INITIAL_ANSWERS,
+  isBottleneckValid,
+} from '../data/landingQuiz'
 
 const STEPS = [
   {
@@ -60,69 +18,37 @@ const STEPS = [
   },
   {
     id: 'avatar',
-    q: '¿Cuál de estas opciones describe mejor tu perfil hoy en día?',
+    q: '¿Cuál es tu situación hoy?',
     type: 'options',
     opts: [
       'Creador de contenido',
-      'Creador de contenido con infoproducto',
-      'Experto en infoproducto / Growth Operator',
-      'Dueño de Negocio',
-      'Dueño de Agencia',
-      'Habilidades de alto valor (setter, closer, content, etc.)',
+      'Creador de contexto',
+      'Experto en infoproductos / Growth Operator',
+      'Dueño de negocio',
+      'Dueño de agencia',
+      'Habilidades de alto valor',
       'Otro',
     ],
   },
   {
     id: 'bottleneck',
-    q: '¿Dónde estaría el cuello de botella en tu negocio?',
+    q: '¿Cuál es tu cuello de botella?',
     type: 'bottleneck',
   },
   {
     id: 'revenue',
-    q: '¿Cuánto estás generando a día de hoy con tu negocio?',
+    q: '¿Cuánto facturas por mes hoy?',
     type: 'options',
-    opts: [
-      '1k a 5k',
-      '5k a 10k',
-      '10k a 30k',
-      '30k a 50k',
-      '+50k',
-    ],
+    opts: ['1k a 5k', '5k a 10k', '10k a 30k', '30k a 50k', '+50k'],
   },
 ]
 
-function isBottleneckValid(answers) {
-  if (answers.bottleneckAreas.length === 0) return false
-  return answers.bottleneckAreas.every((area) => {
-    const key = AREA_TO_ANSWER_KEY[area]
-    return answers[key].length > 0
-  })
-}
-
 function buildPayload(answers, form) {
   return {
-    avatar: answers.avatar,
-    bottleneck_areas: answers.bottleneckAreas,
-    bottleneck_marketing: answers.bottleneckMarketing,
-    bottleneck_ventas: answers.bottleneckVentas,
-    bottleneck_producto: answers.bottleneckProducto,
-    bottleneck_sistemas: answers.bottleneckSistemas,
-    revenue: answers.revenue,
+    ...buildQuizUpdatePayload(answers),
     name: form.name,
     email: form.email,
     phone: form.phone,
-  }
-}
-
-function buildQuizUpdatePayload(answers) {
-  return {
-    avatar: answers.avatar,
-    bottleneck_areas: answers.bottleneckAreas,
-    bottleneck_marketing: answers.bottleneckMarketing,
-    bottleneck_ventas: answers.bottleneckVentas,
-    bottleneck_producto: answers.bottleneckProducto,
-    bottleneck_sistemas: answers.bottleneckSistemas,
-    revenue: answers.revenue,
   }
 }
 
@@ -206,7 +132,6 @@ export default function Quiz({ onComplete }) {
       try {
         const payload = buildPayload(answers, form)
 
-        // Esperar a que leadId esté disponible, con timeout de seguridad
         let waitedId = leadId
         if (!waitedId) {
           const maxWaitMs = 5000
