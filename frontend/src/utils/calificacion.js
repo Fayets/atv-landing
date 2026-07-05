@@ -1,7 +1,7 @@
 export function esCalificado(data) {
   const AVATARES_CAL = [
-    'Creador/infoproductor',
-    'Experto en infoproductos/Growth Operator',
+    'Creador/infoproductos',
+    'Experto en infoproductos / Growth Operator',
     'Dueño de negocio',
     'Dueño de agencia',
   ]
