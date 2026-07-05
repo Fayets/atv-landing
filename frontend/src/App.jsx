@@ -3,6 +3,7 @@ import DashboardPage from './pages/DashboardPage'
 import LandingPage from './pages/LandingPage'
 import AccessCodePage from './pages/AccessCodePage'
 import ProtectedRoute from './components/ProtectedRoute'
+import { esCalificado } from './utils/calificacion'
 
 const LEAD_STORAGE_KEY = 'atv_lead'
 
@@ -28,22 +29,16 @@ export default function App() {
   }, [])
 
   const handleComplete = (data) => {
-    sessionStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(data))
-    setLeadData(data)
+    const calificado = esCalificado(data)
+    const payload = { ...data, calificado }
+    sessionStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(payload))
+    setLeadData(payload)
     window.history.pushState({}, '', '/acceso')
     setPath('/acceso')
   }
 
-  const handleCodeUpdate = (accessCode) => {
-    setLeadData((prev) => {
-      const updated = { ...prev, access_code: accessCode }
-      sessionStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(updated))
-      return updated
-    })
-  }
-
   if (path === '/acceso') {
-    return <AccessCodePage data={leadData} onCodeUpdate={handleCodeUpdate} />
+    return <AccessCodePage data={leadData} calificado={leadData?.calificado} />
   }
   if (path === '/dashboard') {
     return (

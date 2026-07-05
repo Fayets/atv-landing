@@ -41,3 +41,15 @@ export async function deleteLead(id) {
   if (!res.ok) throw new Error('No se pudo eliminar el registrado')
   return res.json()
 }
+
+export async function sendCapiEvent(leadId, eventData) {
+  try {
+    await fetch(`${API_BASE}/leads/${leadId}/capi`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(eventData),
+    })
+  } catch (e) {
+    console.error('CAPI error:', e)
+  }
+}

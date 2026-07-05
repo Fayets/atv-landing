@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { submitLead, updateLead } from '../api/leads'
+import { submitLead, updateLead, sendCapiEvent } from '../api/leads'
 import PhoneInput from '../components/PhoneInput'
 import {
   AREA_TO_ANSWER_KEY,
@@ -10,6 +10,7 @@ import {
   isBottleneckValid,
   QUIZ_STEPS,
 } from '../data/landingQuiz'
+import { esCalificado } from '../utils/calificacion'
 import styles from './LandingPage.module.css'
 
 export default function LandingPage({ onComplete }) {
@@ -88,6 +89,20 @@ export default function LandingPage({ onComplete }) {
           leadIdRef.current = res.id
         }
         if (res?.access_code) setAccessCode(res.access_code)
+        if (res?.id && typeof window.fbq !== 'undefined') {
+          window.fbq('track', 'Lead', {
+            content_name: 'webinar_registro',
+            event_id: `lead_${res.id}_${Date.now()}`,
+          })
+        }
+        if (res?.id) {
+          await sendCapiEvent(res.id, {
+            event_name: 'Lead',
+            event_id: `lead_${res.id}_${Date.now()}`,
+            email: form.email.trim(),
+            phone: form.phone.trim(),
+          })
+        }
       } catch (e) {
         console.error('Error al guardar contacto:', e)
       }
@@ -116,6 +131,34 @@ export default function LandingPage({ onComplete }) {
         }
 
         await updateLead(waitedId, buildQuizUpdatePayload(answers))
+
+        const payload = {
+          ...form,
+          id: waitedId,
+          access_code: accessCode,
+          avatar: answers.avatar,
+          revenue: answers.revenue,
+          bottleneck_marketing: answers.bottleneckMarketing,
+          bottleneck_ventas: answers.bottleneckVentas,
+          bottleneck_producto: answers.bottleneckProducto,
+        }
+
+        if (esCalificado(payload) && typeof window.fbq !== 'undefined') {
+          window.fbq('track', 'SubmitApplication', {
+            content_name: 'webinar_calificado',
+            event_id: `cal_${waitedId}_${Date.now()}`,
+          })
+        }
+
+        if (esCalificado(payload)) {
+          await sendCapiEvent(waitedId, {
+            event_name: 'SubmitApplication',
+            event_id: `cal_${waitedId}_${Date.now()}`,
+            email: form.email.trim(),
+            phone: form.phone.trim(),
+          })
+        }
+
         onComplete({
           ...form,
           id: waitedId,
