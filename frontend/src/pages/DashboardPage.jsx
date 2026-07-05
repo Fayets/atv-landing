@@ -126,6 +126,16 @@ function CalificadoBadge({ calificado }) {
   return <span className={`${styles.statusPill} ${styles.statusSinCalificar}`}>Sin calificar</span>
 }
 
+function getRowStyle(calificado) {
+  if (calificado === true) {
+    return { background: 'rgba(29, 158, 117, 0.08)', borderLeft: '3px solid #1d9e75' }
+  }
+  if (calificado === false) {
+    return { background: 'rgba(176, 69, 69, 0.08)', borderLeft: '3px solid var(--red)' }
+  }
+  return undefined
+}
+
 export default function DashboardPage() {
   const [leads, setLeads] = useState([])
   const [metricsData, setMetricsData] = useState(null)
@@ -481,7 +491,6 @@ export default function DashboardPage() {
                 <tr>
                   <th>#</th>
                   <th>Nombre</th>
-                  <th>Email</th>
                   <th>WhatsApp</th>
                   <th>Clave</th>
                   <th>Situación</th>
@@ -495,14 +504,13 @@ export default function DashboardPage() {
               <tbody>
                 {filteredLeads.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className={styles.cellMuted}>Sin registrados todavía</td>
+                    <td colSpan={10} className={styles.cellMuted}>Sin registrados todavía</td>
                   </tr>
                 ) : (
                   filteredLeads.map((lead) => (
-                    <tr key={lead.id} onClick={() => openPanel(lead)}>
+                    <tr key={lead.id} onClick={() => openPanel(lead)} style={getRowStyle(lead.calificado)}>
                       <td className={styles.cellMuted}>{lead.id}</td>
                       <td className={styles.cellName}>{lead.name}</td>
-                      <td className={styles.cellMuted}>{lead.email}</td>
                       <td>
                         <a
                           href={phoneToWa(lead.phone)}
