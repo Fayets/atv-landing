@@ -122,6 +122,9 @@ export default function LandingPage({ onComplete }) {
           access_code: accessCode,
           avatar: answers.avatar,
           bottleneck_areas: answers.bottleneckAreas,
+          bottleneck_marketing: answers.bottleneckMarketing,
+          bottleneck_ventas: answers.bottleneckVentas,
+          bottleneck_producto: answers.bottleneckProducto,
           revenue: answers.revenue,
         })
       } catch (e) {

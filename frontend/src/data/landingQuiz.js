@@ -53,7 +53,7 @@ export const QUIZ_STEPS = [
     type: 'options',
     opts: [
       'Creador de contenido',
-      'Creador de contexto',
+      'Creador/infoproductos',
       'Experto en infoproductos / Growth Operator',
       'Dueño de negocio',
       'Dueño de agencia',

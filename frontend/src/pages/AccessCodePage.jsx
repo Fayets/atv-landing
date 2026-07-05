@@ -1,18 +1,36 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { buildAccessWhatsappUrl } from '../utils/buildWhatsappMessage'
 import styles from './AccessCodePage.module.css'
 
-const WEBINAR_URL = import.meta.env.VITE_WEBINAR_URL || 'https://webinar.atvos.io'
+const COUNTDOWN_SECONDS = 10
 
 export default function AccessCodePage({ data }) {
   const [copied, setCopied] = useState(false)
+  const [secondsLeft, setSecondsLeft] = useState(COUNTDOWN_SECONDS)
   const code = data?.access_code || '---'
   const name = data?.name || ''
+  const waUrl = useMemo(() => buildAccessWhatsappUrl(data), [data])
+
+  useEffect(() => {
+    if (secondsLeft <= 0) {
+      window.location.href = waUrl
+      return undefined
+    }
+    const timer = window.setTimeout(() => setSecondsLeft((prev) => prev - 1), 1000)
+    return () => window.clearTimeout(timer)
+  }, [secondsLeft, waUrl])
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
+
+  const handleGoNow = () => {
+    window.location.href = waUrl
+  }
+
+  const progress = ((COUNTDOWN_SECONDS - secondsLeft) / COUNTDOWN_SECONDS) * 100
 
   return (
     <div className={styles.page}>
@@ -34,15 +52,31 @@ export default function AccessCodePage({ data }) {
           </button>
         </div>
 
-        <a className={styles.accederBtn} href={WEBINAR_URL}>
-          <span className={styles.accederEyebrow}>Siguiente paso</span>
-          <span className={styles.accederMain}>
-            Acceder al contenido
-            <svg className={styles.accederIcon} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <div className={styles.waRedirect}>
+          <span className={styles.waEyebrow}>Siguiente paso</span>
+          <div className={styles.timerWrap} aria-live="polite">
+            <svg className={styles.timerRing} viewBox="0 0 44 44" aria-hidden="true">
+              <circle className={styles.timerTrack} cx="22" cy="22" r="18" />
+              <circle
+                className={styles.timerProgress}
+                cx="22"
+                cy="22"
+                r="18"
+                style={{ strokeDashoffset: `${113 - (113 * progress) / 100}` }}
+              />
             </svg>
-          </span>
-        </a>
+            <span className={styles.timerValue}>{secondsLeft > 0 ? secondsLeft : '…'}</span>
+          </div>
+          <p className={styles.waText}>
+            {secondsLeft > 0
+              ? `Te redirigimos a WhatsApp en ${secondsLeft} segundo${secondsLeft === 1 ? '' : 's'} para confirmar tu acceso.`
+              : 'Abriendo WhatsApp...'}
+          </p>
+          <button type="button" className={styles.waBtn} onClick={handleGoNow}>
+            <i className="ti ti-brand-whatsapp" aria-hidden="true" />
+            Ir a WhatsApp ahora
+          </button>
+        </div>
       </div>
     </div>
   )
