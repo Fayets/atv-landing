@@ -89,18 +89,22 @@ export default function LandingPage({ onComplete }) {
           leadIdRef.current = res.id
         }
         if (res?.access_code) setAccessCode(res.access_code)
-        if (res?.id && typeof window.fbq !== 'undefined') {
-          window.fbq('track', 'Lead', {
-            content_name: 'webinar_registro',
-            event_id: `lead_${res.id}_${Date.now()}`,
-          })
-        }
         if (res?.id) {
+          const leadEventId = `lead_${res.id}_${Date.now()}`
+
+          if (typeof window.fbq !== 'undefined') {
+            window.fbq('track', 'Lead', {
+              content_name: 'webinar_registro',
+            }, {
+              eventID: leadEventId,
+            })
+          }
+
           await sendCapiEvent(res.id, {
             event_name: 'Lead',
-            event_id: `lead_${res.id}_${Date.now()}`,
-            email: form.email.trim(),
-            phone: form.phone.trim(),
+            event_id: leadEventId,
+            email: form.email,
+            phone: form.phone,
           })
         }
       } catch (e) {
@@ -147,19 +151,22 @@ export default function LandingPage({ onComplete }) {
 
         await updateLead(waitedId, { calificado })
 
-        if (calificado && typeof window.fbq !== 'undefined') {
-          window.fbq('track', 'SubmitApplication', {
-            content_name: 'webinar_calificado',
-            event_id: `cal_${waitedId}_${Date.now()}`,
-          })
-        }
+        if (esCalificado(payload)) {
+          const calEventId = `cal_${waitedId}_${Date.now()}`
 
-        if (calificado) {
+          if (typeof window.fbq !== 'undefined') {
+            window.fbq('track', 'SubmitApplication', {
+              content_name: 'webinar_calificado',
+            }, {
+              eventID: calEventId,
+            })
+          }
+
           await sendCapiEvent(waitedId, {
             event_name: 'SubmitApplication',
-            event_id: `cal_${waitedId}_${Date.now()}`,
-            email: form.email.trim(),
-            phone: form.phone.trim(),
+            event_id: calEventId,
+            email: form.email,
+            phone: form.phone,
           })
         }
 
