@@ -158,8 +158,6 @@ export default function LandingPage({ onComplete }) {
         <div className={styles.heroInner}>
           <span className={styles.badge}>
             <span className={styles.badgeDot} aria-hidden="true" />
-            ACCESO GRATUITO
-            <span className={styles.badgeSep} aria-hidden="true">·</span>
             CLAVE PERSONAL DE ACCESO
           </span>
 
@@ -306,18 +304,12 @@ export default function LandingPage({ onComplete }) {
                 disabled={!canNext}
               >
                 {step.type === 'form'
-                  ? 'QUIERO MI ACCESO GRATUITO →'
+                  ? 'QUIERO MI ACCESO →'
                   : isLast
                     ? 'OBTENER MI CLAVE →'
                     : 'CONTINUAR →'}
               </button>
             </div>
-
-            {step.type === 'form' && (
-              <p className={styles.disclaimer}>
-                Sin spam. Tu información es 100% segura.
-              </p>
-            )}
           </div>
         </div>
       </section>

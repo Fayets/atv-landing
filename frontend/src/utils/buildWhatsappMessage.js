@@ -22,6 +22,8 @@ export function buildAccessWhatsappMessage(data) {
   return [
     'Hola! Acabo de completar mi registro en ATV.',
     '',
+    'Quiero recibir mi acceso al contenido.',
+    '',
     'DATOS DE CONTACTO',
     `Nombre: ${data?.name || '-'}`,
     `Email: ${data?.email || '-'}`,
@@ -36,8 +38,6 @@ export function buildAccessWhatsappMessage(data) {
     '',
     'MI CLAVE DE ACCESO',
     data?.access_code || '-',
-    '',
-    'Quiero recibir mi acceso al contenido.',
   ].join('\n')
 }
 
