@@ -25,14 +25,17 @@ class LeadsServices:
     def create_lead(self, data: LeadCreate) -> dict:
         code = self._unique_code()
         with db_session:
-            lead = Lead(
-                name=data.name,
-                email=data.email,
-                phone=data.phone,
-                access_code=code,
-                created_at=datetime.utcnow(),
-                contacted=False,
-            )
+            lead_kwargs = {
+                "name": data.name,
+                "email": data.email,
+                "phone": data.phone,
+                "access_code": code,
+                "created_at": datetime.utcnow(),
+                "contacted": False,
+            }
+            if data.calificado is not None:
+                lead_kwargs["calificado"] = data.calificado
+            lead = Lead(**lead_kwargs)
             flush()
             return {"ok": True, "id": lead.id, "access_code": lead.access_code}
 
@@ -75,6 +78,8 @@ class LeadsServices:
                 lead.bottleneck_sistemas = json.dumps(data.bottleneck_sistemas)
             if data.revenue is not None:
                 lead.revenue = data.revenue
+            if data.calificado is not None:
+                lead.calificado = data.calificado
             return self._to_dict(lead)
 
     def regenerar_codigo(self, lead_id: int) -> dict | None:
@@ -170,6 +175,7 @@ class LeadsServices:
             "bottleneck_producto": self._deserialize_list(lead.bottleneck_producto),
             "bottleneck_sistemas": self._deserialize_list(lead.bottleneck_sistemas),
             "revenue": lead.revenue,
+            "calificado": lead.calificado,
             "created_at": f"{lead.created_at.isoformat()}Z",
             "contacted": lead.contacted,
             "notes": lead.notes,

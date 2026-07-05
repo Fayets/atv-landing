@@ -7,6 +7,7 @@ class LeadCreate(BaseModel):
     name: str
     email: str
     phone: str
+    calificado: Optional[bool] = None
 
 
 class LeadUpdate(BaseModel):
@@ -19,6 +20,7 @@ class LeadUpdate(BaseModel):
     bottleneck_producto: Optional[List[str]] = None
     bottleneck_sistemas: Optional[List[str]] = None
     revenue: Optional[str] = None
+    calificado: Optional[bool] = None
 
 
 class LeadOut(BaseModel):
@@ -34,6 +36,7 @@ class LeadOut(BaseModel):
     bottleneck_producto: Optional[List[str]] = None
     bottleneck_sistemas: Optional[List[str]] = None
     revenue: Optional[str] = None
+    calificado: Optional[bool] = None
     created_at: datetime
     contacted: bool
     notes: Optional[str] = None

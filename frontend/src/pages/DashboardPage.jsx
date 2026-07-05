@@ -116,6 +116,16 @@ function StatusPill({ contacted, onClick, fullWidth = false }) {
   )
 }
 
+function CalificadoBadge({ calificado }) {
+  if (calificado === true) {
+    return <span className={`${styles.statusPill} ${styles.statusCalificado}`}>✓ Calificado</span>
+  }
+  if (calificado === false) {
+    return <span className={`${styles.statusPill} ${styles.statusNoCalificado}`}>✗ No calificado</span>
+  }
+  return <span className={`${styles.statusPill} ${styles.statusSinCalificar}`}>Sin calificar</span>
+}
+
 export default function DashboardPage() {
   const [leads, setLeads] = useState([])
   const [metricsData, setMetricsData] = useState(null)
@@ -518,7 +528,10 @@ export default function DashboardPage() {
                       <td className={styles.cellMuted}>{lead.revenue || '—'}</td>
                       <td className={styles.cellMuted}>{formatDateShort(lead.created_at)}</td>
                       <td>
-                        <StatusPill contacted={lead.contacted} onClick={() => toggleContacted(lead.id)} />
+                        <div className={styles.statusBadges}>
+                          <CalificadoBadge calificado={lead.calificado} />
+                          <StatusPill contacted={lead.contacted} onClick={() => toggleContacted(lead.id)} />
+                        </div>
                       </td>
                       <td>
                         <button type="button" className={styles.rowAction} onClick={(e) => { e.stopPropagation(); openPanel(lead) }}>
@@ -650,11 +663,14 @@ export default function DashboardPage() {
 
             <section className={styles.panelSection}>
               <h3 className={styles.panelSectionTitle}>Estado</h3>
-              <StatusPill
-                contacted={selectedLead.contacted}
-                onClick={() => toggleContacted(selectedLead.id)}
-                fullWidth
-              />
+              <div className={styles.statusBadges}>
+                <CalificadoBadge calificado={selectedLead.calificado} />
+                <StatusPill
+                  contacted={selectedLead.contacted}
+                  onClick={() => toggleContacted(selectedLead.id)}
+                  fullWidth
+                />
+              </div>
             </section>
 
             <section className={styles.panelSection}>

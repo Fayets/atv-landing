@@ -143,14 +143,18 @@ export default function LandingPage({ onComplete }) {
           bottleneck_producto: answers.bottleneckProducto,
         }
 
-        if (esCalificado(payload) && typeof window.fbq !== 'undefined') {
+        const calificado = esCalificado(payload)
+
+        await updateLead(waitedId, { calificado })
+
+        if (calificado && typeof window.fbq !== 'undefined') {
           window.fbq('track', 'SubmitApplication', {
             content_name: 'webinar_calificado',
             event_id: `cal_${waitedId}_${Date.now()}`,
           })
         }
 
-        if (esCalificado(payload)) {
+        if (calificado) {
           await sendCapiEvent(waitedId, {
             event_name: 'SubmitApplication',
             event_id: `cal_${waitedId}_${Date.now()}`,
