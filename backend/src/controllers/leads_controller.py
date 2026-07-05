@@ -96,7 +96,9 @@ async def send_capi_event(lead_id: int, request: Request):
             json=payload
         )
 
-    return res.json()
+    result = res.json()
+    print(f"[CAPI] Status: {res.status_code} | Response: {result}", flush=True)
+    return result
 
 
 @router.delete("/{lead_id}")
