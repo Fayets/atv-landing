@@ -10,6 +10,12 @@ import {
   saveLead,
 } from './utils/leadSession'
 
+const PAGE_TITLES = {
+  '/': 'ATV',
+  '/acceso': 'ATV - Thanks you Page',
+  '/dashboard': 'ATV - Dashboard',
+}
+
 export default function App() {
   const [path, setPath] = useState(() => window.location.pathname)
   const [leadData, setLeadData] = useState(() => (
@@ -21,6 +27,10 @@ export default function App() {
     window.addEventListener('popstate', syncPath)
     return () => window.removeEventListener('popstate', syncPath)
   }, [])
+
+  useEffect(() => {
+    document.title = PAGE_TITLES[path] || PAGE_TITLES['/']
+  }, [path])
 
   useEffect(() => {
     if (path !== '/acceso') return
