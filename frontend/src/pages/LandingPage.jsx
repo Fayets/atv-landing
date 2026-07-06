@@ -216,14 +216,10 @@ export default function LandingPage({ onComplete }) {
           </span>
 
           <h1 className={styles.headline}>
-            Escalé a +$170k/mes en orgánico,
-            <br />
+            Escalé a +$170k/mes en orgánico,{' '}
             <span className={styles.accent}>sin ads y 6 piezas de contenido.</span>
             <br />
-            <br />
-            Te muestro el método
-            <br />
-            me lo permitió y cómo replicarlo.
+            Te muestro el método me lo permitió y cómo replicarlo.
           </h1>
 
           <p className={styles.sub}>
