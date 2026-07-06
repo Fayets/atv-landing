@@ -18,7 +18,7 @@ const STEPS = [
   },
   {
     id: 'avatar',
-    q: '¿Cuál es tu situación hoy?',
+    q: '¿Cuál es tu perfil hoy?',
     type: 'options',
     opts: [
       'Creador de contenido',
@@ -39,7 +39,7 @@ const STEPS = [
     id: 'revenue',
     q: '¿Cuánto facturas por mes hoy?',
     type: 'options',
-    opts: ['1k a 5k', '5k a 10k', '10k a 30k', '30k a 50k', '+50k'],
+    opts: ['$1k a $5k', '$5k a $10k', '$10k a $30k', '$30k a $50k', '+$50k'],
   },
 ]
 

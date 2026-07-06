@@ -11,11 +11,11 @@
   --red-bright: #e04545;
   --error: #e84848;
   --radius: 8px;
-  --font: 'Inter', system-ui, sans-serif;
+  --font: 'Inter Variable', 'Inter', system-ui, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
-  --font-display: 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-metric: 'Inter', system-ui, sans-serif;
+  --font-display: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-metric: 'Inter Variable', 'Inter', system-ui, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

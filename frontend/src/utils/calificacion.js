@@ -5,7 +5,7 @@ export function esCalificado(data) {
     'Dueño de negocio',
     'Dueño de agencia',
   ]
-  const REVENUE_CAL = ['10k a 30k', '30k a 50k', '+50k']
+  const REVENUE_CAL = ['$10k a $30k', '$30k a $50k', '+$50k']
   const SUB_CAL = {
     bottleneck_marketing: [
       'Mis leads son de mala calidad / no califican',
@@ -20,7 +20,7 @@ export function esCalificado(data) {
       'No tengo métricas claras de mi negocio',
     ],
     bottleneck_producto: [
-      'Tengo una tasa alta de refunds',
+      'Tengo una alta tasa de refunds',
       'No tengo un sistema de upsell y recompras claro',
       'El producto depende demasiado de mí',
       'No tengo métricas claras de mi negocio',

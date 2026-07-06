@@ -4,17 +4,11 @@ import LandingPage from './pages/LandingPage'
 import AccessCodePage from './pages/AccessCodePage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { esCalificado } from './utils/calificacion'
-
-const LEAD_STORAGE_KEY = 'atv_lead'
-
-function readStoredLead() {
-  try {
-    const stored = sessionStorage.getItem(LEAD_STORAGE_KEY)
-    return stored ? JSON.parse(stored) : null
-  } catch {
-    return null
-  }
-}
+import {
+  isValidLead,
+  readStoredLead,
+  saveLead,
+} from './utils/leadSession'
 
 export default function App() {
   const [path, setPath] = useState(() => window.location.pathname)
@@ -28,17 +22,32 @@ export default function App() {
     return () => window.removeEventListener('popstate', syncPath)
   }, [])
 
+  useEffect(() => {
+    if (path !== '/acceso') return
+
+    const stored = readStoredLead()
+    if (isValidLead(stored)) {
+      setLeadData(stored)
+      return
+    }
+
+    setLeadData(null)
+    window.history.replaceState({}, '', '/')
+    setPath('/')
+  }, [path])
+
   const handleComplete = (data) => {
     const calificado = esCalificado(data)
     const payload = { ...data, calificado }
-    sessionStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(payload))
+    saveLead(payload)
     setLeadData(payload)
     window.history.pushState({}, '', '/acceso')
     setPath('/acceso')
   }
 
   if (path === '/acceso') {
-    return <AccessCodePage data={leadData} calificado={leadData?.calificado} />
+    if (!isValidLead(leadData)) return null
+    return <AccessCodePage data={leadData} calificado={leadData.calificado} />
   }
   if (path === '/dashboard') {
     return (

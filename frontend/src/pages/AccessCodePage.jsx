@@ -36,8 +36,9 @@ export default function AccessCodePage({ data, calificado }) {
           {name ? `${name.split(' ')[0]}, ya sos parte.` : 'Ya sos parte.'}
         </h1>
         <p className={styles.sub}>
-          Esta es tu clave de acceso personal e intransferible.
-          Guardala ahora — la vas a necesitar para ingresar al contenido.
+          Copia y guarda tu clave.
+          <br />
+          La vas a necesitar para ingresar al contenido.
         </p>
 
         <div className={styles.codeWrap}>

@@ -17,7 +17,7 @@ export const BOTTLENECK_SUB_OPTS = {
   ],
   Producto: [
     'No tengo casos de éxito',
-    'Tengo una tasa alta de refunds',
+    'Tengo una alta tasa de refunds',
     'No tengo un sistema de upsell y recompras claro',
     'El producto depende demasiado de mí',
     'No tengo métricas claras de mi negocio',
@@ -49,7 +49,7 @@ export const QUIZ_STEPS = [
   {
     id: 'avatar',
     title: 'SITUACIÓN ACTUAL',
-    question: '¿Cuál es tu situación hoy?',
+    question: '¿Cuál es tu perfil hoy?',
     type: 'options',
     opts: [
       'Creador de contenido',
@@ -72,7 +72,7 @@ export const QUIZ_STEPS = [
     title: 'CALIFICACIÓN',
     question: '¿Cuánto facturas por mes hoy?',
     type: 'options',
-    opts: ['1k a 5k', '5k a 10k', '10k a 30k', '30k a 50k', '+50k'],
+    opts: ['$1k a $5k', '$5k a $10k', '$10k a $30k', '$30k a $50k', '+$50k'],
   },
 ]
 

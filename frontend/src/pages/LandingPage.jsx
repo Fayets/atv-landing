@@ -212,20 +212,24 @@ export default function LandingPage({ onComplete }) {
         <div className={styles.heroInner}>
           <span className={styles.badge}>
             <span className={styles.badgeDot} aria-hidden="true" />
-            CLAVE PERSONAL DE ACCESO
+            ACCESO PRIVADO
           </span>
 
           <h1 className={styles.headline}>
-            Escalé a +$170k/mes únicamente en orgánico
+            Escalé a +$170k/mes en orgánico,
             <br />
-            subiendo <span className={styles.accent}>6 piezas de contenido al mes.</span>
+            <span className={styles.accent}>sin ads y 6 piezas de contenido.</span>
             <br />
-            Te muestro el sistema que me lo permitió.
+            <br />
+            Te muestro el método
+            <br />
+            me lo permitió y cómo replicarlo.
           </h1>
 
           <p className={styles.sub}>
-            Lo que estás por ver me costó años, mucho dinero y errores que no tenés que repetir.
-            Completá tus datos y accedé gratis — tu clave es única, intransferible y tiene cupos limitados.
+            Completá tus datos y accede.
+            <br />
+            Los cupos son limitados.
           </p>
 
           <div className={styles.formCard}>
@@ -363,6 +367,10 @@ export default function LandingPage({ onComplete }) {
                     ? 'OBTENER MI CLAVE →'
                     : 'CONTINUAR →'}
               </button>
+
+              {step.type === 'form' && (
+                <p className={styles.ctaNote}>Tu clave es única e intransferible.</p>
+              )}
             </div>
           </div>
         </div>

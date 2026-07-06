@@ -32,11 +32,11 @@ const AREA_BODY = {
 const CONTEXT_PARAGRAPH = 'Esto no es casualidad ni mala suerte. Es un patrón que vemos una y otra vez en negocios con tu mismo perfil — y la buena noticia es que tiene solución concreta, no genérica.'
 
 const REVENUE_CLOSING = {
-  '1k a 5k': 'Esto no se resuelve facturando más. Se resuelve resolviendo esto primero — sino, vas a seguir en el mismo lugar facturando más esfuerzo, no más resultado.',
-  '5k a 10k': 'Estás en el momento exacto donde esto se corrige rápido o se vuelve un techo de cristal. Cada mes que pasa sin resolverlo, se hace más caro de corregir.',
-  '10k a 30k': 'A este nivel, el problema ya no es chico. Si no lo corregís ahora, no vas a escalar — vas a repetir el mismo error con más volumen.',
-  '30k a 50k': 'Llegaste hasta acá a pesar de esto, no gracias a esto. Imaginate lo que cambia cuando dejes de cargar con este problema.',
-  '+50k': 'El problema en este nivel no es de esfuerzo, es de estructura. Lo que te trajo hasta acá no te va a llevar al siguiente nivel.',
+  '$1k a $5k': 'Esto no se resuelve facturando más. Se resuelve resolviendo esto primero — sino, vas a seguir en el mismo lugar facturando más esfuerzo, no más resultado.',
+  '$5k a $10k': 'Estás en el momento exacto donde esto se corrige rápido o se vuelve un techo de cristal. Cada mes que pasa sin resolverlo, se hace más caro de corregir.',
+  '$10k a $30k': 'A este nivel, el problema ya no es chico. Si no lo corregís ahora, no vas a escalar — vas a repetir el mismo error con más volumen.',
+  '$30k a $50k': 'Llegaste hasta acá a pesar de esto, no gracias a esto. Imaginate lo que cambia cuando dejes de cargar con este problema.',
+  '+$50k': 'El problema en este nivel no es de esfuerzo, es de estructura. Lo que te trajo hasta acá no te va a llevar al siguiente nivel.',
 }
 
 const DIAGNOSIS_CTA = 'Esto es exactamente lo que vemos en consultoría: el problema nunca es lo que la persona cree que es. Si querés que lo revisemos juntos, dale Continuar.'

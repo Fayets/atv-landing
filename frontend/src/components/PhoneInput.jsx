@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   PHONE_COUNTRIES,
   buildFullPhone,
@@ -12,7 +13,9 @@ export default function PhoneInput({ value, onChange, placeholder = 'Tu número 
   const [country, setCountry] = useState(parsed.country)
   const [local, setLocal] = useState(parsed.local)
   const [open, setOpen] = useState(false)
+  const [dropdownStyle, setDropdownStyle] = useState(null)
   const rootRef = useRef(null)
+  const dropdownRef = useRef(null)
 
   useEffect(() => {
     const parsedValue = parsePhoneValue(value)
@@ -21,12 +24,37 @@ export default function PhoneInput({ value, onChange, placeholder = 'Tu número 
   }, [value])
 
   useEffect(() => {
+    if (!open || !rootRef.current) return undefined
+
+    const updatePosition = () => {
+      const rect = rootRef.current.getBoundingClientRect()
+      setDropdownStyle({
+        top: rect.bottom + 6,
+        left: rect.left,
+        width: rect.width,
+      })
+    }
+
+    updatePosition()
+    window.addEventListener('resize', updatePosition)
+    window.addEventListener('scroll', updatePosition, true)
+    return () => {
+      window.removeEventListener('resize', updatePosition)
+      window.removeEventListener('scroll', updatePosition, true)
+    }
+  }, [open])
+
+  useEffect(() => {
     if (!open) return undefined
 
     const handleClickOutside = (e) => {
-      if (rootRef.current && !rootRef.current.contains(e.target)) {
-        setOpen(false)
+      if (
+        (rootRef.current && rootRef.current.contains(e.target))
+        || (dropdownRef.current && dropdownRef.current.contains(e.target))
+      ) {
+        return
       }
+      setOpen(false)
     }
 
     document.addEventListener('mousedown', handleClickOutside)
@@ -76,8 +104,13 @@ export default function PhoneInput({ value, onChange, placeholder = 'Tu número 
         />
       </div>
 
-      {open && (
-        <ul className={styles.dropdown} role="listbox">
+      {open && dropdownStyle && createPortal(
+        <ul
+          ref={dropdownRef}
+          className={styles.dropdown}
+          style={dropdownStyle}
+          role="listbox"
+        >
           {PHONE_COUNTRIES.map((item) => (
             <li key={item.iso}>
               <button
@@ -93,7 +126,8 @@ export default function PhoneInput({ value, onChange, placeholder = 'Tu número 
               </button>
             </li>
           ))}
-        </ul>
+        </ul>,
+        document.body,
       )}
     </div>
   )

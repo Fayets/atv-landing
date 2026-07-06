@@ -1,6 +1,11 @@
 const WA_NUMBER = import.meta.env.VITE_WA_NUMBER || '5491162626702'
 
-export function buildWhatsappUrl(data) {
+function field(value, fallback = '-') {
+  const text = typeof value === 'string' ? value.trim() : value
+  return text || fallback
+}
+
+export function buildWhatsappUrl(data = {}) {
   const areas = []
   if (data.bottleneck_marketing?.length) {
     areas.push(`Marketing:\n${data.bottleneck_marketing.map(o => `- ${o}`).join('\n')}`)
@@ -19,16 +24,16 @@ export function buildWhatsappUrl(data) {
     `Hola! Acabo de completar mi registro en ATV.\n` +
     `Quiero recibir mi acceso al contenido.\n\n` +
     `DATOS DE CONTACTO\n` +
-    `Nombre: ${data.name}\n` +
-    `Email: ${data.email}\n` +
-    `WhatsApp: ${data.phone}\n\n` +
+    `Nombre: ${field(data.name)}\n` +
+    `Email: ${field(data.email)}\n` +
+    `WhatsApp: ${field(data.phone)}\n\n` +
     `MI SITUACIÓN\n` +
-    `Perfil: ${data.avatar || '-'}\n` +
-    `Facturación mensual: ${data.revenue || '-'}\n\n` +
+    `Perfil: ${field(data.avatar)}\n` +
+    `Facturación mensual: ${field(data.revenue)}\n\n` +
     `CUELLO DE BOTELLA\n` +
     `${areas.join('\n') || '-'}\n\n` +
     `MI CLAVE DE ACCESO\n` +
-    `${data.access_code}`
+    `${field(data.access_code)}`
   )
   return `https://wa.me/${WA_NUMBER}?text=${msg}`
 }
