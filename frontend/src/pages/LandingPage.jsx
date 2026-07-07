@@ -11,7 +11,12 @@ import {
   QUIZ_STEPS,
 } from '../data/landingQuiz'
 import { esCalificado } from '../utils/calificacion'
+import CosmicBackground from '../components/CosmicBackground'
 import styles from './LandingPage.module.css'
+
+const INITIAL_CUPOS = 52
+const MIN_CUPOS = 9
+const CUPOS_TICK_MS = 25000
 
 export default function LandingPage({ onComplete }) {
   const [current, setCurrent] = useState(0)
@@ -22,10 +27,31 @@ export default function LandingPage({ onComplete }) {
   const leadIdRef = useRef(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [cuposRestantes, setCuposRestantes] = useState(INITIAL_CUPOS)
+  const [cuposPulse, setCuposPulse] = useState(false)
 
   useEffect(() => {
     leadIdRef.current = leadId
   }, [leadId])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCuposRestantes((prev) => {
+        if (prev <= MIN_CUPOS) return prev
+        return prev - 1
+      })
+    }, CUPOS_TICK_MS)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    if (cuposRestantes === INITIAL_CUPOS) return undefined
+
+    setCuposPulse(true)
+    const timeout = setTimeout(() => setCuposPulse(false), 700)
+    return () => clearTimeout(timeout)
+  }, [cuposRestantes])
 
   const step = QUIZ_STEPS[current]
   const isLast = current === QUIZ_STEPS.length - 1
@@ -198,15 +224,53 @@ export default function LandingPage({ onComplete }) {
   if (loading) {
     return (
       <div className={styles.loadingWrap}>
-        <div className={styles.spinner} />
-        <p className={styles.loadingText}>Generando tu acceso exclusivo...</p>
+        <CosmicBackground />
+        <div className={styles.loadingContent}>
+          <div className={styles.spinner} />
+          <p className={styles.loadingText}>Generando tu acceso exclusivo...</p>
+        </div>
       </div>
     )
   }
 
   return (
     <div className={styles.page}>
-      <div className={styles.halo} aria-hidden="true" />
+      <CosmicBackground />
+
+      {current === 0 && (
+        <div className={styles.showcase} aria-hidden="true">
+          <img
+            className={`${styles.showcaseImg} ${styles.showcaseCharts}`}
+            src="/landing-charts.png"
+            alt=""
+          />
+          <img
+            className={`${styles.showcaseImg} ${styles.showcaseProcess}`}
+            src="/landing-process.png"
+            alt=""
+          />
+          <img
+            className={`${styles.showcaseImg} ${styles.showcaseFunnel}`}
+            src="/landing-funnel.png"
+            alt=""
+          />
+          <img
+            className={`${styles.showcaseImg} ${styles.showcaseFlows}`}
+            src="/landing-flows.png"
+            alt=""
+          />
+          <img
+            className={`${styles.showcaseImg} ${styles.showcaseFlywheel}`}
+            src="/landing-flywheel.png"
+            alt=""
+          />
+          <img
+            className={`${styles.showcaseImg} ${styles.showcaseFunnelFull}`}
+            src="/landing-funnel-full.png"
+            alt=""
+          />
+        </div>
+      )}
 
       <section className={styles.hero}>
         <div className={styles.heroInner}>
@@ -218,19 +282,29 @@ export default function LandingPage({ onComplete }) {
           <h1 className={styles.headline}>
             Escalé a +$170k/mes en orgánico,{' '}
             <span className={styles.accent}>sin ads y 6 piezas de contenido.</span>
-            <br />
-            Te muestro el método me lo permitió y cómo replicarlo.
+            <span className={styles.headlineSecondary}>
+              Te muestro el método me lo permitió y cómo replicarlo.
+            </span>
           </h1>
 
-          <p className={styles.sub}>
-            Completá tus datos y accede.
-            <br />
-            Los cupos son limitados.
-          </p>
+          <div className={styles.subWrap}>
+            <p className={styles.sub}>Completá tus datos y accede gratis hoy.</p>
+            <span className={`${styles.cuposBadge} ${cuposPulse ? styles.cuposBadgePulse : ''}`}>
+              <span className={styles.cuposBadgeInner}>
+                Quedan{' '}
+                <span className={styles.cuposNumber} key={cuposRestantes}>
+                  {cuposRestantes}
+                </span>
+                {' '}cupos disponibles
+              </span>
+            </span>
+          </div>
 
           <div className={styles.formCard}>
             <div className={styles.formHeader}>
-              <p className={styles.formTitle}>{step.title}</p>
+              {step.type === 'form' && (
+                <p className={styles.formTitle}>{step.title}</p>
+              )}
               {step.type !== 'form' && (
                 <>
                   <p className={styles.stepLabel}>
