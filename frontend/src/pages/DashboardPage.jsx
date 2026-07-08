@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { fetchLeads as getLeads, updateLead, deleteLead } from '../api/leads'
+import { buildSetterWhatsappUrl } from '../utils/buildSetterWhatsappUrl'
 import styles from './DashboardPage.module.css'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
@@ -17,11 +18,6 @@ async function getMetrics() {
   const res = await fetch(`${API_BASE}/leads/metrics`)
   if (!res.ok) throw new Error('No se pudieron cargar las métricas')
   return res.json()
-}
-
-function phoneToWa(phone) {
-  const digits = phone.replace(/\D/g, '')
-  return `https://wa.me/${digits}`
 }
 
 function parseUtcDate(iso) {
@@ -610,7 +606,7 @@ export default function DashboardPage() {
                       <td className={styles.cellName}>{lead.name}</td>
                       <td>
                         <a
-                          href={phoneToWa(lead.phone)}
+                          href={buildSetterWhatsappUrl(lead)}
                           rel="noopener noreferrer"
                           className={styles.waLink}
                           onClick={(e) => e.stopPropagation()}
@@ -714,7 +710,7 @@ export default function DashboardPage() {
                 <i className="ti ti-mail" />
                 {selectedLead.email}
               </a>
-              <a href={phoneToWa(selectedLead.phone)} target="_blank" rel="noopener noreferrer" className={styles.panelWa}>
+              <a href={buildSetterWhatsappUrl(selectedLead)} target="_blank" rel="noopener noreferrer" className={styles.panelWa}>
                 <i className="ti ti-brand-whatsapp" />
                 {selectedLead.phone}
               </a>
