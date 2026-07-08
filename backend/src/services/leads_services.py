@@ -23,6 +23,10 @@ class LeadsServices:
         return code
 
     def create_lead(self, data: LeadCreate) -> dict:
+        with db_session:
+            total = Lead.select().count()
+        responsable = "Lucas" if total % 2 == 0 else "Jero"
+
         code = self._unique_code()
         with db_session:
             lead_kwargs = {
@@ -32,6 +36,7 @@ class LeadsServices:
                 "access_code": code,
                 "created_at": datetime.utcnow(),
                 "contacted": False,
+                "responsable": responsable,
             }
             if data.calificado is not None:
                 lead_kwargs["calificado"] = data.calificado
@@ -80,6 +85,8 @@ class LeadsServices:
                 lead.revenue = data.revenue
             if data.calificado is not None:
                 lead.calificado = data.calificado
+            if data.responsable is not None:
+                lead.responsable = data.responsable
             return self._to_dict(lead)
 
     def regenerar_codigo(self, lead_id: int) -> dict | None:
@@ -176,6 +183,7 @@ class LeadsServices:
             "bottleneck_sistemas": self._deserialize_list(lead.bottleneck_sistemas),
             "revenue": lead.revenue,
             "calificado": lead.calificado,
+            "responsable": lead.responsable,
             "created_at": f"{lead.created_at.isoformat()}Z",
             "contacted": lead.contacted,
             "notes": lead.notes,

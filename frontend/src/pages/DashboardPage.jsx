@@ -126,6 +126,27 @@ function CalificadoBadge({ calificado }) {
   return <span className={`${styles.statusPill} ${styles.statusSinCalificar}`}>Sin calificar</span>
 }
 
+function isLeadComplete(lead) {
+  return lead.avatar != null && lead.avatar !== ''
+}
+
+function TipoLeadBadge({ lead }) {
+  if (isLeadComplete(lead)) {
+    return <span className={`${styles.statusPill} ${styles.statusCompleto}`}>Completo</span>
+  }
+  return <span className={`${styles.statusPill} ${styles.statusSoloDatos}`}>Solo datos</span>
+}
+
+function ResponsableBadge({ responsable }) {
+  if (responsable === 'Lucas') {
+    return <span className={`${styles.statusPill} ${styles.responsableLucas}`}>Lucas</span>
+  }
+  if (responsable === 'Jero') {
+    return <span className={`${styles.statusPill} ${styles.responsableJero}`}>Jero</span>
+  }
+  return <span className={`${styles.statusPill} ${styles.responsableSinAsignar}`}>Sin asignar</span>
+}
+
 function getRowStyle(calificado) {
   if (calificado === true) {
     return { background: 'rgba(29, 158, 117, 0.08)', borderLeft: '3px solid #1d9e75' }
@@ -143,6 +164,7 @@ export default function DashboardPage() {
   const [search, setSearch] = useState('')
   const [areaFilter, setAreaFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [responsableFilter, setResponsableFilter] = useState('')
   const [selectedId, setSelectedId] = useState(null)
   const [noteDraft, setNoteDraft] = useState('')
   const [regenConfirming, setRegenConfirming] = useState(false)
@@ -185,8 +207,11 @@ export default function DashboardPage() {
     const q = search.trim().toLowerCase()
     return leads.filter((lead) => {
       if (areaFilter && !(lead.bottleneck_areas || []).includes(areaFilter)) return false
+      if (responsableFilter && lead.responsable !== responsableFilter) return false
       if (statusFilter === 'pending' && lead.contacted) return false
       if (statusFilter === 'contacted' && !lead.contacted) return false
+      if (statusFilter === 'complete' && !isLeadComplete(lead)) return false
+      if (statusFilter === 'solo-datos' && isLeadComplete(lead)) return false
       if (!q) return true
       return (
         lead.name.toLowerCase().includes(q)
@@ -195,15 +220,17 @@ export default function DashboardPage() {
         || (lead.access_code || '').toLowerCase().includes(q)
       )
     })
-  }, [leads, search, areaFilter, statusFilter])
+  }, [leads, search, areaFilter, statusFilter, responsableFilter])
 
   const metrics = useMemo(() => {
     const total = metricsData?.total ?? 0
     const contacted = metricsData?.contacted ?? 0
     const pending = metricsData?.pending ?? 0
     const rate = total > 0 ? Math.round((contacted / total) * 100) : 0
-    return { total, pending, contacted, rate }
-  }, [metricsData])
+    const lucasCount = leads.filter((l) => l.responsable === 'Lucas').length
+    const jeroCount = leads.filter((l) => l.responsable === 'Jero').length
+    return { total, pending, contacted, rate, lucasCount, jeroCount }
+  }, [metricsData, leads])
 
   const dailyData = useMemo(() => (
     (metricsData?.daily ?? []).map((day) => ({
@@ -301,6 +328,16 @@ export default function DashboardPage() {
     }
   }
 
+  const handleResponsableChange = async (nuevoValor) => {
+    if (!selectedLead) return
+    try {
+      const updated = await updateLead(selectedLead.id, { responsable: nuevoValor })
+      setLeads((prev) => prev.map((l) => (l.id === selectedLead.id ? updated : l)))
+    } catch {
+      // keep current state on error
+    }
+  }
+
   const handleConfirmDelete = async () => {
     if (!selectedLead) return
     setDeleteLoading(true)
@@ -380,6 +417,17 @@ export default function DashboardPage() {
               <i className="ti ti-chart-pie" />
             </div>
             <div className={styles.metricNum}>{metrics.rate}%</div>
+          </div>
+          <div className={styles.metricCard}>
+            <div className={styles.metricHead}>
+              <span className={styles.metricLabel}>Asignación setters</span>
+              <i className="ti ti-users-group" />
+            </div>
+            <div className={styles.metricSplit}>
+              <span className={styles.metricSplitLucas}>Lucas: {metrics.lucasCount}</span>
+              <span className={styles.metricSplitSep}>|</span>
+              <span className={styles.metricSplitJero}>Jero: {metrics.jeroCount}</span>
+            </div>
           </div>
         </section>
 
@@ -465,10 +513,17 @@ export default function DashboardPage() {
                 <option key={area} value={area}>{area}</option>
               ))}
             </select>
+            <select className={styles.select} value={responsableFilter} onChange={(e) => setResponsableFilter(e.target.value)}>
+              <option value="">Todos los responsables</option>
+              <option value="Lucas">Lucas</option>
+              <option value="Jero">Jero</option>
+            </select>
             <select className={styles.select} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               <option value="all">Todos</option>
               <option value="pending">Pendientes</option>
               <option value="contacted">Contactados</option>
+              <option value="complete">Completos</option>
+              <option value="solo-datos">Solo datos</option>
             </select>
           </div>
           <div className={styles.toolbarRight}>
@@ -493,6 +548,7 @@ export default function DashboardPage() {
                   <th>Nombre</th>
                   <th>WhatsApp</th>
                   <th>Clave</th>
+                  <th>Responsable</th>
                   <th>Situación</th>
                   <th>Áreas</th>
                   <th>Facturación</th>
@@ -504,7 +560,7 @@ export default function DashboardPage() {
               <tbody>
                 {filteredLeads.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className={styles.cellMuted}>Sin registrados todavía</td>
+                    <td colSpan={11} className={styles.cellMuted}>Sin registrados todavía</td>
                   </tr>
                 ) : (
                   filteredLeads.map((lead) => (
@@ -525,6 +581,9 @@ export default function DashboardPage() {
                       <td>
                         <span className={styles.accessCode}>{lead.access_code}</span>
                       </td>
+                      <td>
+                        <ResponsableBadge responsable={lead.responsable} />
+                      </td>
                       <td className={styles.cellMuted}>{lead.avatar || '—'}</td>
                       <td>
                         <div className={styles.areaBadges}>
@@ -537,6 +596,7 @@ export default function DashboardPage() {
                       <td className={styles.cellMuted}>{formatDateShort(lead.created_at)}</td>
                       <td>
                         <div className={styles.statusBadges}>
+                          <TipoLeadBadge lead={lead} />
                           <CalificadoBadge calificado={lead.calificado} />
                           <StatusPill contacted={lead.contacted} onClick={() => toggleContacted(lead.id)} />
                         </div>
@@ -670,8 +730,22 @@ export default function DashboardPage() {
             </section>
 
             <section className={styles.panelSection}>
+              <h3 className={styles.panelSectionTitle}>Responsable</h3>
+              <select
+                className={styles.select}
+                value={selectedLead.responsable || ''}
+                onChange={(e) => handleResponsableChange(e.target.value)}
+              >
+                <option value="" disabled>Sin asignar</option>
+                <option value="Lucas">Lucas</option>
+                <option value="Jero">Jero</option>
+              </select>
+            </section>
+
+            <section className={styles.panelSection}>
               <h3 className={styles.panelSectionTitle}>Estado</h3>
               <div className={styles.statusBadges}>
+                <TipoLeadBadge lead={selectedLead} />
                 <CalificadoBadge calificado={selectedLead.calificado} />
                 <StatusPill
                   contacted={selectedLead.contacted}

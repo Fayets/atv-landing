@@ -45,7 +45,7 @@
 
 .metricsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 14px;
 }
 
@@ -86,6 +86,29 @@
 
 .metricNumRed {
   color: #c0000a;
+}
+
+.metricSplit {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.metricSplitLucas {
+  color: #6ba3e0;
+}
+
+.metricSplitSep {
+  color: #6b6560;
+  font-size: 22px;
+}
+
+.metricSplitJero {
+  color: #b088e0;
 }
 
 .chartsGrid {
@@ -496,6 +519,41 @@
 }
 
 .statusSinCalificar {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94a3b8;
+  border: 0.5px solid rgba(148, 163, 184, 0.3);
+  cursor: default;
+}
+
+.statusCompleto {
+  background: rgba(74, 222, 128, 0.1);
+  color: #4ade80;
+  border: 0.5px solid rgba(74, 222, 128, 0.3);
+  cursor: default;
+}
+
+.statusSoloDatos {
+  background: rgba(251, 146, 60, 0.12);
+  color: #fb923c;
+  border: 0.5px solid rgba(251, 146, 60, 0.3);
+  cursor: default;
+}
+
+.responsableLucas {
+  background: rgba(60, 120, 200, 0.15);
+  color: #6ba3e0;
+  border: 0.5px solid rgba(60, 120, 200, 0.3);
+  cursor: default;
+}
+
+.responsableJero {
+  background: rgba(150, 90, 200, 0.15);
+  color: #b088e0;
+  border: 0.5px solid rgba(150, 90, 200, 0.3);
+  cursor: default;
+}
+
+.responsableSinAsignar {
   background: rgba(148, 163, 184, 0.12);
   color: #94a3b8;
   border: 0.5px solid rgba(148, 163, 184, 0.3);

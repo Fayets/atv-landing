@@ -19,6 +19,7 @@ class Lead(db.Entity):
     bottleneck_sistemas  = Optional(str)
     revenue              = Optional(str)
     calificado           = Optional(bool)
+    responsable          = Optional(str)
 
     created_at   = Required(datetime, default=datetime.utcnow)
     contacted    = Required(bool, default=False)

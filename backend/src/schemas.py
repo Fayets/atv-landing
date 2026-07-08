@@ -13,6 +13,7 @@ class LeadCreate(BaseModel):
 class LeadUpdate(BaseModel):
     contacted: Optional[bool] = None
     notes: Optional[str] = None
+    responsable: Optional[str] = None
     avatar: Optional[str] = None
     bottleneck_areas: Optional[List[str]] = None
     bottleneck_marketing: Optional[List[str]] = None
@@ -37,6 +38,7 @@ class LeadOut(BaseModel):
     bottleneck_sistemas: Optional[List[str]] = None
     revenue: Optional[str] = None
     calificado: Optional[bool] = None
+    responsable: Optional[str] = None
     created_at: datetime
     contacted: bool
     notes: Optional[str] = None
