@@ -47,7 +47,7 @@ export async function sendCapiEvent(leadId, eventData) {
     await fetch(`${API_BASE}/leads/${leadId}/capi`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(eventData),
+      body: JSON.stringify({ ...eventData, source_url: window.location.origin }),
     })
   } catch (e) {
     console.error('CAPI error:', e)

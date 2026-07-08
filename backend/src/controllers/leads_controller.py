@@ -71,6 +71,7 @@ async def send_capi_event(lead_id: int, request: Request):
     event_id = body.get("event_id", f"{event_name}_{lead_id}_{int(time.time())}")
     email = body.get("email", "")
     phone = body.get("phone", "")
+    source_url = body.get("source_url", "https://atvv.site")
 
     if not META_ACCESS_TOKEN:
         return {"ok": False, "error": "META_CAPI_TOKEN no configurado"}
@@ -81,7 +82,7 @@ async def send_capi_event(lead_id: int, request: Request):
             "event_time": int(time.time()),
             "event_id": event_id,
             "action_source": "website",
-            "event_source_url": "https://landing.atvos.io",
+            "event_source_url": source_url,
             "user_data": {
                 "em": [hash_data(email)] if email else [],
                 "ph": [hash_data(phone)] if phone else [],
