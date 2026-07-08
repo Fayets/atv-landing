@@ -1,4 +1,10 @@
 const COURSE_URL = import.meta.env.VITE_COURSE_URL || import.meta.env.VITE_LANDING_URL || 'https://atvos.io/course'
+const ZWSP = '\u200B'
+
+// WhatsApp genera preview de links detectados. Los ZWSP evitan que lo reconozca como URL.
+function urlWithoutPreview(url) {
+  return url.replace(/([./:])/g, `$1${ZWSP}`)
+}
 
 function getFirstName(name) {
   return (name || '').trim().split(/\s+/)[0] || ''
@@ -33,7 +39,7 @@ function buildSoloDatosMessage(lead) {
 }
 
 function buildCompletoMessage(lead) {
-  const link = COURSE_URL
+  const link = urlWithoutPreview(COURSE_URL)
   const problema = getLeadProblema(lead)
   return (
     `buenas, como andamos? por acá juan\n\n` +
