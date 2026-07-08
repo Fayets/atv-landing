@@ -1,22 +1,9 @@
-// TODO deploy: agregar https://landing.atvos.io a CORS_ORIGINS
-// en el .env del backend de ATV Ecosystem.
-
-const ECOSYSTEM_API = import.meta.env.VITE_ECOSYSTEM_API_URL
-
-export async function loginRequest(username, password) {
-  const res = await fetch(`${ECOSYSTEM_API}/api/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ username, password }),
-  })
-  if (!res.ok) throw new Error('Credenciales inválidas')
-  return res.json()
-}
+const API_BASE = import.meta.env.VITE_API_URL || '/acceso/api'
+const ECOSYSTEM_URL = import.meta.env.VITE_ECOSYSTEM_URL || 'https://ecosystem.atvos.io'
 
 export async function getSession() {
   try {
-    const res = await fetch(`${ECOSYSTEM_API}/api/auth/session`, {
+    const res = await fetch(`${API_BASE}/auth/session`, {
       credentials: 'include',
     })
     if (!res.ok) return null
@@ -27,8 +14,5 @@ export async function getSession() {
 }
 
 export async function logoutRequest() {
-  await fetch(`${ECOSYSTEM_API}/api/auth/logout`, {
-    method: 'POST',
-    credentials: 'include',
-  })
+  window.location.href = ECOSYSTEM_URL
 }
