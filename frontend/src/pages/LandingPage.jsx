@@ -283,7 +283,7 @@ export default function LandingPage({ onComplete }) {
             Escalé a +$170k/mes en orgánico,{' '}
             <span className={styles.accent}>sin ads y 6 piezas de contenido.</span>
             <span className={styles.headlineSecondary}>
-              Te muestro el método me lo permitió y cómo replicarlo.
+              Te muestro el método que me lo permitió y cómo replicarlo.
             </span>
           </h1>
 
@@ -295,7 +295,7 @@ export default function LandingPage({ onComplete }) {
                 <span className={styles.cuposNumber} key={cuposRestantes}>
                   {cuposRestantes}
                 </span>
-                {' '}cupos disponibles
+                {' '}accesos disponibles
               </span>
             </span>
           </div>
@@ -439,7 +439,9 @@ export default function LandingPage({ onComplete }) {
               </button>
 
               {step.type === 'form' && (
-                <p className={styles.ctaNote}>Tu clave es única e intransferible.</p>
+                <p className={styles.ctaNote}>
+                  Luego de completar el formulario vas a obtener una clave única e intransferible.
+                </p>
               )}
             </div>
           </div>
