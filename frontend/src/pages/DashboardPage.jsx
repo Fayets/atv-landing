@@ -322,7 +322,7 @@ export default function DashboardPage() {
         <nav className={styles.navbar}>
           <div className={styles.navLeft}>
             <img
-              src="/ATVLogin.png"
+              src={`${import.meta.env.BASE_URL}ATVLogin.png`}
               alt="ATV — Aumenta Tu Valor"
               className={styles.logo}
               width={32}
@@ -342,7 +342,7 @@ export default function DashboardPage() {
       <nav className={styles.navbar}>
         <div className={styles.navLeft}>
           <img
-            src="/ATVLogin.png"
+            src={`${import.meta.env.BASE_URL}ATVLogin.png`}
             alt="ATV — Aumenta Tu Valor"
             className={styles.logo}
             width={32}

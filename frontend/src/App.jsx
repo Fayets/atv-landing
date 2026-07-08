@@ -10,6 +10,13 @@ import {
   saveLead,
 } from './utils/leadSession'
 
+const BASE = '/acceso'
+
+function stripBase(path) {
+  const p = path.startsWith(BASE) ? path.slice(BASE.length) : path
+  return p === '' ? '/' : p
+}
+
 const PAGE_TITLES = {
   '/': 'ATV',
   '/acceso': 'ATV - Thanks you Page',
@@ -17,13 +24,13 @@ const PAGE_TITLES = {
 }
 
 export default function App() {
-  const [path, setPath] = useState(() => window.location.pathname)
+  const [path, setPath] = useState(() => stripBase(window.location.pathname))
   const [leadData, setLeadData] = useState(() => (
-    window.location.pathname === '/acceso' ? readStoredLead() : null
+    stripBase(window.location.pathname) === '/acceso' ? readStoredLead() : null
   ))
 
   useEffect(() => {
-    const syncPath = () => setPath(window.location.pathname)
+    const syncPath = () => setPath(stripBase(window.location.pathname))
     window.addEventListener('popstate', syncPath)
     return () => window.removeEventListener('popstate', syncPath)
   }, [])
@@ -42,7 +49,7 @@ export default function App() {
     }
 
     setLeadData(null)
-    window.history.replaceState({}, '', '/')
+    window.history.replaceState({}, '', BASE)
     setPath('/')
   }, [path])
 
@@ -51,7 +58,7 @@ export default function App() {
     const payload = { ...data, calificado }
     saveLead(payload)
     setLeadData(payload)
-    window.history.pushState({}, '', '/acceso')
+    window.history.pushState({}, '', `${BASE}/acceso`)
     setPath('/acceso')
   }
 
@@ -69,6 +76,6 @@ export default function App() {
   if (path === '/') {
     return <LandingPage onComplete={handleComplete} />
   }
-  window.location.replace('/')
+  window.location.replace(BASE)
   return null
 }

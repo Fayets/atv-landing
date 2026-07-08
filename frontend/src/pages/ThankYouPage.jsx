@@ -22,7 +22,7 @@ export default function ThankYouPage({ data }) {
   return (
     <div className={styles.page}>
       <nav className={styles.nav}>
-        <img src="/ATVLogin.png" alt="ATV — Aumenta Tu Valor" className={styles.logo} width={36} height={36} />
+        <img src={`${import.meta.env.BASE_URL}ATVLogin.png`} alt="ATV — Aumenta Tu Valor" className={styles.logo} width={36} height={36} />
       </nav>
 
       <div className={styles.center}>

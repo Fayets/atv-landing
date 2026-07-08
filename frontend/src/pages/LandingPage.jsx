@@ -241,32 +241,32 @@ export default function LandingPage({ onComplete }) {
         <div className={styles.showcase} aria-hidden="true">
           <img
             className={`${styles.showcaseImg} ${styles.showcaseCharts}`}
-            src="/landing-charts.png"
+            src={`${import.meta.env.BASE_URL}landing-charts.png`}
             alt=""
           />
           <img
             className={`${styles.showcaseImg} ${styles.showcaseProcess}`}
-            src="/landing-process.png"
+            src={`${import.meta.env.BASE_URL}landing-process.png`}
             alt=""
           />
           <img
             className={`${styles.showcaseImg} ${styles.showcaseFunnel}`}
-            src="/landing-funnel.png"
+            src={`${import.meta.env.BASE_URL}landing-funnel.png`}
             alt=""
           />
           <img
             className={`${styles.showcaseImg} ${styles.showcaseFlows}`}
-            src="/landing-flows.png"
+            src={`${import.meta.env.BASE_URL}landing-flows.png`}
             alt=""
           />
           <img
             className={`${styles.showcaseImg} ${styles.showcaseFlywheel}`}
-            src="/landing-flywheel.png"
+            src={`${import.meta.env.BASE_URL}landing-flywheel.png`}
             alt=""
           />
           <img
             className={`${styles.showcaseImg} ${styles.showcaseFunnelFull}`}
-            src="/landing-funnel-full.png"
+            src={`${import.meta.env.BASE_URL}landing-funnel-full.png`}
             alt=""
           />
         </div>
