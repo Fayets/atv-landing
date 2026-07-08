@@ -28,6 +28,31 @@
   flex-wrap: wrap;
 }
 
+.btnAnalytics {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: #181818;
+  border: 0.5px solid #1e1e1e;
+  color: #f0ede8;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btnAnalytics:hover {
+  border-color: #3d0000;
+  color: #ff8888;
+}
+
+.btnAnalytics i {
+  font-size: 16px;
+}
+
 .logo {
   height: 32px;
   width: auto;
@@ -582,6 +607,62 @@
   z-index: 80;
 }
 
+.analyticsModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(1100px, calc(100vw - 40px));
+  max-height: calc(100vh - 48px);
+  background: #111111;
+  border: 0.5px solid #1e1e1e;
+  border-radius: 14px;
+  overflow: hidden;
+  z-index: 85;
+  display: flex;
+  flex-direction: column;
+}
+
+.analyticsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 0.5px solid #1e1e1e;
+  background: #111111;
+  flex-shrink: 0;
+}
+
+.analyticsTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #f0ede8;
+}
+
+.analyticsClose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #181818;
+  border: 0.5px solid #1e1e1e;
+  color: #6b6560;
+  cursor: pointer;
+}
+
+.analyticsClose:hover {
+  color: #f0ede8;
+}
+
+.analyticsBody {
+  overflow-y: auto;
+  padding: 20px;
+}
+
 .panel {
   position: fixed;
   top: 0;
@@ -940,6 +1021,15 @@
   .navbar {
     padding-left: 16px;
     padding-right: 16px;
+  }
+
+  .analyticsModal {
+    width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+  }
+
+  .analyticsBody {
+    padding: 14px;
   }
 
   .metricsGrid {

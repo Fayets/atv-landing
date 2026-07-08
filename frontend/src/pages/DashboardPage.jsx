@@ -100,6 +100,85 @@ function HorizontalBar({ label, value, max }) {
   )
 }
 
+function AnalyticsCharts({
+  dailyData,
+  maxDaily,
+  avatarData,
+  maxAvatar,
+  bottleneckAreaData,
+  maxBottleneckArea,
+  subObstacleData,
+  maxSubObstacle,
+  revenueData,
+  maxRevenue,
+}) {
+  return (
+    <section className={styles.chartsGrid}>
+      <div className={`${styles.chartCard} ${styles.chartCardDaily}`}>
+        <h2 className={styles.chartTitle}>Registros últimos 14 días</h2>
+        <div className={styles.barChart}>
+          {dailyData.map((day) => (
+            <div key={day.key} className={styles.barCol}>
+              <div className={styles.barTrack}>
+                <div
+                  className={styles.barFill}
+                  style={{
+                    height: day.count > 0
+                      ? `${Math.max((day.count / maxDaily) * 100, 2)}%`
+                      : '0',
+                    minHeight: day.count > 0 ? 2 : 0,
+                  }}
+                />
+              </div>
+              <span className={styles.barLabel}>{day.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className={styles.chartCard}>
+        <h2 className={styles.chartTitle}>Por situación</h2>
+        <div className={styles.hBarList}>
+          {avatarData.length === 0 ? (
+            <p className={styles.cellMuted}>Sin datos todavía</p>
+          ) : avatarData.map(([label, value]) => (
+            <HorizontalBar key={label} label={label} value={value} max={maxAvatar} />
+          ))}
+        </div>
+      </div>
+      <div className={styles.chartCard}>
+        <h2 className={styles.chartTitle}>Por cuello de botella</h2>
+        <div className={styles.hBarList}>
+          {bottleneckAreaData.length === 0 ? (
+            <p className={styles.cellMuted}>Sin datos todavía</p>
+          ) : bottleneckAreaData.map(([label, value]) => (
+            <HorizontalBar key={label} label={label} value={value} max={maxBottleneckArea} />
+          ))}
+        </div>
+      </div>
+      <div className={styles.chartCard}>
+        <h2 className={styles.chartTitle}>Top obstáculos</h2>
+        <div className={styles.hBarList}>
+          {subObstacleData.length === 0 ? (
+            <p className={styles.cellMuted}>Sin datos todavía</p>
+          ) : subObstacleData.map(([label, value]) => (
+            <HorizontalBar key={label} label={label} value={value} max={maxSubObstacle} />
+          ))}
+        </div>
+      </div>
+      <div className={styles.chartCard}>
+        <h2 className={styles.chartTitle}>Por facturación</h2>
+        <div className={styles.hBarList}>
+          {revenueData.length === 0 ? (
+            <p className={styles.cellMuted}>Sin datos todavía</p>
+          ) : revenueData.map(([label, value]) => (
+            <HorizontalBar key={label} label={label} value={value} max={maxRevenue} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function StatusPill({ contacted, onClick, fullWidth = false }) {
   return (
     <button
@@ -174,6 +253,7 @@ export default function DashboardPage() {
   const [deleteConfirming, setDeleteConfirming] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [deleteError, setDeleteError] = useState(null)
+  const [showAnalytics, setShowAnalytics] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -202,6 +282,15 @@ export default function DashboardPage() {
     loadDashboard()
     return () => { cancelled = true }
   }, [])
+
+  useEffect(() => {
+    if (!showAnalytics) return undefined
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setShowAnalytics(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [showAnalytics])
 
   const filteredLeads = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -366,6 +455,14 @@ export default function DashboardPage() {
               height={32}
             />
           </div>
+          <button
+            type="button"
+            className={styles.btnAnalytics}
+            onClick={() => setShowAnalytics(true)}
+          >
+            <i className="ti ti-chart-bar" />
+            Ver análisis
+          </button>
         </nav>
         <main className={styles.content}>
           <p className={styles.cellMuted}>Cargando...</p>
@@ -386,6 +483,14 @@ export default function DashboardPage() {
             height={32}
           />
         </div>
+        <button
+          type="button"
+          className={styles.btnAnalytics}
+          onClick={() => setShowAnalytics(true)}
+        >
+          <i className="ti ti-chart-bar" />
+          Ver análisis
+        </button>
       </nav>
 
       <main className={styles.content}>
@@ -427,70 +532,6 @@ export default function DashboardPage() {
               <span className={styles.metricSplitLucas}>Lucas: {metrics.lucasCount}</span>
               <span className={styles.metricSplitSep}>|</span>
               <span className={styles.metricSplitJero}>Jero: {metrics.jeroCount}</span>
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.chartsGrid}>
-          <div className={`${styles.chartCard} ${styles.chartCardDaily}`}>
-            <h2 className={styles.chartTitle}>Registros últimos 14 días</h2>
-            <div className={styles.barChart}>
-              {dailyData.map((day) => (
-                <div key={day.key} className={styles.barCol}>
-                  <div className={styles.barTrack}>
-                    <div
-                      className={styles.barFill}
-                      style={{
-                        height: day.count > 0
-                          ? `${Math.max((day.count / maxDaily) * 100, 2)}%`
-                          : '0',
-                        minHeight: day.count > 0 ? 2 : 0,
-                      }}
-                    />
-                  </div>
-                  <span className={styles.barLabel}>{day.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className={styles.chartCard}>
-            <h2 className={styles.chartTitle}>Por situación</h2>
-            <div className={styles.hBarList}>
-              {avatarData.length === 0 ? (
-                <p className={styles.cellMuted}>Sin datos todavía</p>
-              ) : avatarData.map(([label, value]) => (
-                <HorizontalBar key={label} label={label} value={value} max={maxAvatar} />
-              ))}
-            </div>
-          </div>
-          <div className={styles.chartCard}>
-            <h2 className={styles.chartTitle}>Por cuello de botella</h2>
-            <div className={styles.hBarList}>
-              {bottleneckAreaData.length === 0 ? (
-                <p className={styles.cellMuted}>Sin datos todavía</p>
-              ) : bottleneckAreaData.map(([label, value]) => (
-                <HorizontalBar key={label} label={label} value={value} max={maxBottleneckArea} />
-              ))}
-            </div>
-          </div>
-          <div className={styles.chartCard}>
-            <h2 className={styles.chartTitle}>Top obstáculos</h2>
-            <div className={styles.hBarList}>
-              {subObstacleData.length === 0 ? (
-                <p className={styles.cellMuted}>Sin datos todavía</p>
-              ) : subObstacleData.map(([label, value]) => (
-                <HorizontalBar key={label} label={label} value={value} max={maxSubObstacle} />
-              ))}
-            </div>
-          </div>
-          <div className={styles.chartCard}>
-            <h2 className={styles.chartTitle}>Por facturación</h2>
-            <div className={styles.hBarList}>
-              {revenueData.length === 0 ? (
-                <p className={styles.cellMuted}>Sin datos todavía</p>
-              ) : revenueData.map(([label, value]) => (
-                <HorizontalBar key={label} label={label} value={value} max={maxRevenue} />
-              ))}
             </div>
           </div>
         </section>
@@ -614,6 +655,44 @@ export default function DashboardPage() {
           </div>
         </section>
       </main>
+
+      {showAnalytics && (
+        <>
+          <button
+            type="button"
+            className={styles.overlay}
+            aria-label="Cerrar análisis"
+            onClick={() => setShowAnalytics(false)}
+          />
+          <div className={styles.analyticsModal} role="dialog" aria-modal="true" aria-labelledby="analytics-title">
+            <header className={styles.analyticsHeader}>
+              <h2 id="analytics-title" className={styles.analyticsTitle}>Análisis de registrados</h2>
+              <button
+                type="button"
+                className={styles.analyticsClose}
+                onClick={() => setShowAnalytics(false)}
+                aria-label="Cerrar"
+              >
+                <i className="ti ti-x" />
+              </button>
+            </header>
+            <div className={styles.analyticsBody}>
+              <AnalyticsCharts
+                dailyData={dailyData}
+                maxDaily={maxDaily}
+                avatarData={avatarData}
+                maxAvatar={maxAvatar}
+                bottleneckAreaData={bottleneckAreaData}
+                maxBottleneckArea={maxBottleneckArea}
+                subObstacleData={subObstacleData}
+                maxSubObstacle={maxSubObstacle}
+                revenueData={revenueData}
+                maxRevenue={maxRevenue}
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       {selectedLead && (
         <>
