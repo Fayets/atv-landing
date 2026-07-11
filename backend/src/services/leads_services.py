@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from pony.orm import db_session, flush
 from src.models import Lead
 from src.schemas import LeadCreate, LeadUpdate
+from src.calificacion import es_calificado
 
 
 class LeadsServices:
@@ -56,6 +57,8 @@ class LeadsServices:
                 lead_kwargs["revenue"] = data.revenue
             if data.calificado is not None:
                 lead_kwargs["calificado"] = data.calificado
+            elif data.revenue is not None:
+                lead_kwargs["calificado"] = es_calificado(data.revenue)
             lead = Lead(**lead_kwargs)
             flush()
             return {"ok": True, "id": lead.id, "access_code": lead.access_code}
@@ -101,6 +104,8 @@ class LeadsServices:
                 lead.bottleneck_sistemas = json.dumps(data.bottleneck_sistemas)
             if data.revenue is not None:
                 lead.revenue = data.revenue
+                if data.calificado is None:
+                    lead.calificado = es_calificado(data.revenue)
             if data.calificado is not None:
                 lead.calificado = data.calificado
             if data.responsable is not None:
@@ -123,6 +128,35 @@ class LeadsServices:
                 return False
             lead.delete()
             return True
+
+    def recalculate_all_calificado(self) -> dict:
+        with db_session:
+            leads = list(Lead.select())
+            updated = 0
+            calificados = 0
+            no_calificados = 0
+            sin_calificar = 0
+
+            for lead in leads:
+                nuevo = es_calificado(lead.revenue)
+                if lead.calificado != nuevo:
+                    lead.calificado = nuevo
+                    updated += 1
+                if nuevo is True:
+                    calificados += 1
+                elif nuevo is False:
+                    no_calificados += 1
+                else:
+                    sin_calificar += 1
+
+            return {
+                "ok": True,
+                "total": len(leads),
+                "updated": updated,
+                "calificados": calificados,
+                "no_calificados": no_calificados,
+                "sin_calificar": sin_calificar,
+            }
 
     def get_metrics(self) -> dict:
         with db_session:

@@ -48,7 +48,7 @@ export const REVENUE_OPTIONS = [
   '+$50k',
 ]
 
-export const REVENUE_QUALIFIED = ['$10k a $30k', '$30k a $50k', '+$50k']
+export const REVENUE_QUALIFIED = ['$5k a $10k', '$10k a $30k', '$30k a $50k', '+$50k']
 
 export const QUIZ_STEPS = [
   {

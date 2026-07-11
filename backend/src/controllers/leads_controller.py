@@ -32,6 +32,11 @@ def get_metrics():
     return svc.get_metrics()
 
 
+@router.post("/recalculate-calificacion")
+def recalculate_calificacion():
+    return svc.recalculate_all_calificado()
+
+
 @router.get("/verify/{code}")
 def verify_code(code: str):
     lead = svc.verify_code(code)
