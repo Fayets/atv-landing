@@ -419,6 +419,60 @@
   overflow-x: auto;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border-top: 0.5px solid #1e1e1e;
+  background: #181818;
+}
+
+.paginationInfo {
+  font-size: 14px;
+  color: #6b6560;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.paginationPage {
+  font-size: 14px;
+  color: #f0ede8;
+  min-width: 100px;
+  text-align: center;
+}
+
+.paginationBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: #111111;
+  border: 0.5px solid #1e1e1e;
+  color: #f0ede8;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.paginationBtn:hover:not(:disabled) {
+  border-color: #3d0000;
+  color: #ff8888;
+}
+
+.paginationBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -489,6 +543,20 @@
 
 .waLink i {
   color: #4ade80;
+  font-size: 14px;
+}
+
+.igLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b6560;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.igLink i {
+  color: #e879a8;
   font-size: 14px;
 }
 

@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
-import { submitLead, updateLead, sendCapiEvent } from '../api/leads'
+import { useEffect, useState } from 'react'
+import { submitLead, sendCapiEvent } from '../api/leads'
 import PhoneInput from '../components/PhoneInput'
 import {
   AREA_TO_ANSWER_KEY,
   BOTTLENECK_AREAS,
   BOTTLENECK_SUB_OPTS,
-  buildQuizUpdatePayload,
   INITIAL_ANSWERS,
   isBottleneckValid,
   QUIZ_STEPS,
@@ -22,17 +21,10 @@ export default function LandingPage({ onComplete }) {
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState(INITIAL_ANSWERS)
   const [form, setForm] = useState({ name: '', email: '', phone: '', ig: '' })
-  const [leadId, setLeadId] = useState(null)
-  const [accessCode, setAccessCode] = useState(null)
-  const leadIdRef = useRef(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [cuposRestantes, setCuposRestantes] = useState(INITIAL_CUPOS)
   const [cuposPulse, setCuposPulse] = useState(false)
-
-  useEffect(() => {
-    leadIdRef.current = leadId
-  }, [leadId])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -59,7 +51,7 @@ export default function LandingPage({ onComplete }) {
 
   const canNext = (() => {
     if (step.type === 'form') {
-      return form.name.trim() && form.email.trim() && form.phone.trim()
+      return form.name.trim() && form.email.trim() && form.phone.trim() && form.ig.trim()
     }
     if (step.type === 'options') return !!answers[step.id]
     if (step.type === 'bottleneck') return isBottleneckValid(answers)
@@ -104,39 +96,6 @@ export default function LandingPage({ onComplete }) {
   const handleNext = async () => {
     if (step.type === 'form') {
       setError(null)
-      try {
-        const res = await submitLead({
-          name: form.name.trim(),
-          email: form.email.trim(),
-          phone: form.phone.trim(),
-          ig: form.ig.trim() || undefined,
-        })
-        if (res?.id) {
-          setLeadId(res.id)
-          leadIdRef.current = res.id
-        }
-        if (res?.access_code) setAccessCode(res.access_code)
-        if (res?.id) {
-          const leadEventId = `lead_${res.id}_${Date.now()}`
-
-          if (typeof window.fbq !== 'undefined') {
-            window.fbq('track', 'Lead', {
-              content_name: 'webinar_registro',
-            }, {
-              eventID: leadEventId,
-            })
-          }
-
-          await sendCapiEvent(res.id, {
-            event_name: 'Lead',
-            event_id: leadEventId,
-            email: form.email,
-            phone: form.phone,
-          })
-        }
-      } catch (e) {
-        console.error('Error al guardar contacto:', e)
-      }
       setCurrent((c) => c + 1)
       return
     }
@@ -145,29 +104,13 @@ export default function LandingPage({ onComplete }) {
       setLoading(true)
       setError(null)
       try {
-        let waitedId = leadId
-        if (!waitedId) {
-          const maxWaitMs = 5000
-          const stepMs = 150
-          let waited = 0
-          while (!waitedId && waited < maxWaitMs) {
-            await new Promise((r) => setTimeout(r, stepMs))
-            waited += stepMs
-            waitedId = leadIdRef.current
-          }
-        }
-
-        if (!waitedId) {
-          throw new Error('No se pudo vincular tu registro. Probá completar el formulario de nuevo.')
-        }
-
-        await updateLead(waitedId, buildQuizUpdatePayload(answers))
-
         const payload = {
-          ...form,
-          id: waitedId,
-          access_code: accessCode,
+          name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          ig: form.ig.trim(),
           avatar: answers.avatar,
+          bottleneck_areas: answers.bottleneckAreas,
           revenue: answers.revenue,
           bottleneck_marketing: answers.bottleneckMarketing,
           bottleneck_ventas: answers.bottleneckVentas,
@@ -175,11 +118,34 @@ export default function LandingPage({ onComplete }) {
         }
 
         const calificado = esCalificado(payload)
+        const res = await submitLead({
+          ...payload,
+          calificado,
+        })
 
-        await updateLead(waitedId, { calificado })
+        if (!res?.id) {
+          throw new Error('No se pudo crear tu registro. Probá de nuevo.')
+        }
+
+        const leadEventId = `lead_${res.id}_${Date.now()}`
+
+        if (typeof window.fbq !== 'undefined') {
+          window.fbq('track', 'Lead', {
+            content_name: 'webinar_registro',
+          }, {
+            eventID: leadEventId,
+          })
+        }
+
+        await sendCapiEvent(res.id, {
+          event_name: 'Lead',
+          event_id: leadEventId,
+          email: payload.email,
+          phone: payload.phone,
+        })
 
         if (esCalificado(payload)) {
-          const calEventId = `cal_${waitedId}_${Date.now()}`
+          const calEventId = `cal_${res.id}_${Date.now()}`
 
           if (typeof window.fbq !== 'undefined') {
             window.fbq('track', 'SubmitApplication', {
@@ -189,24 +155,19 @@ export default function LandingPage({ onComplete }) {
             })
           }
 
-          await sendCapiEvent(waitedId, {
+          await sendCapiEvent(res.id, {
             event_name: 'SubmitApplication',
             event_id: calEventId,
-            email: form.email,
-            phone: form.phone,
+            email: payload.email,
+            phone: payload.phone,
           })
         }
 
         onComplete({
-          ...form,
-          id: waitedId,
-          access_code: accessCode,
-          avatar: answers.avatar,
-          bottleneck_areas: answers.bottleneckAreas,
-          bottleneck_marketing: answers.bottleneckMarketing,
-          bottleneck_ventas: answers.bottleneckVentas,
-          bottleneck_producto: answers.bottleneckProducto,
-          revenue: answers.revenue,
+          ...payload,
+          id: res.id,
+          access_code: res.access_code,
+          calificado,
         })
       } catch (e) {
         setError(e.message || 'Ocurrió un error. Intentá de nuevo.')

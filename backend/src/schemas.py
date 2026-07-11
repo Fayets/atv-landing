@@ -8,6 +8,13 @@ class LeadCreate(BaseModel):
     email: str
     phone: str
     ig: Optional[str] = None
+    avatar: Optional[str] = None
+    bottleneck_areas: Optional[List[str]] = None
+    bottleneck_marketing: Optional[List[str]] = None
+    bottleneck_ventas: Optional[List[str]] = None
+    bottleneck_producto: Optional[List[str]] = None
+    bottleneck_sistemas: Optional[List[str]] = None
+    revenue: Optional[str] = None
     calificado: Optional[bool] = None
 
 

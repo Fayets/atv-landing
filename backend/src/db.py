@@ -5,18 +5,21 @@ from decouple import config
 db = Database()
 DB_SCHEMA = config("DB_SCHEMA", default="landing")
 
-QUIZ_COLUMNS = (
-    "avatar",
-    "bottleneck_areas",
-    "bottleneck_marketing",
-    "bottleneck_ventas",
-    "bottleneck_producto",
-    "bottleneck_sistemas",
-    "revenue",
-)
+MIGRATION_COLUMNS = {
+    "avatar": "TEXT",
+    "bottleneck_areas": "TEXT",
+    "bottleneck_marketing": "TEXT",
+    "bottleneck_ventas": "TEXT",
+    "bottleneck_producto": "TEXT",
+    "bottleneck_sistemas": "TEXT",
+    "revenue": "TEXT",
+    "ig": "TEXT",
+    "responsable": "TEXT",
+    "calificado": "BOOLEAN",
+}
 
 
-def _ensure_quiz_columns():
+def _ensure_columns():
     conn = psycopg2.connect(
         host=config("DB_HOST"),
         port=int(config("DB_PORT", default=5432)),
@@ -28,16 +31,17 @@ def _ensure_quiz_columns():
     conn.autocommit = True
     try:
         with conn.cursor() as cur:
-            cur.execute(f"SET search_path TO {DB_SCHEMA}")
-            for column in QUIZ_COLUMNS:
-                cur.execute(f"ALTER TABLE leads ADD COLUMN IF NOT EXISTS {column} TEXT")
+            table = f'"{DB_SCHEMA}"."leads"'
+            for column, col_type in MIGRATION_COLUMNS.items():
+                cur.execute(
+                    f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {col_type}"
+                )
     finally:
         conn.close()
 
 
 def init_db():
     from src import models  # noqa: F401
-    _ensure_quiz_columns()
     db.bind(
         provider="postgres",
         host=config("DB_HOST"),
@@ -47,3 +51,4 @@ def init_db():
         password=config("DB_PASSWORD"),
     )
     db.generate_mapping(create_tables=True)
+    _ensure_columns()

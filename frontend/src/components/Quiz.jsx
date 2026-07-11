@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import styles from './Quiz.module.css'
-import { submitLead, updateLead } from '../api/leads'
+import { submitLead } from '../api/leads'
 import {
   AREA_TO_ANSWER_KEY,
   BOTTLENECK_AREAS,
@@ -9,6 +9,7 @@ import {
   INITIAL_ANSWERS,
   isBottleneckValid,
 } from '../data/landingQuiz'
+import { esCalificado } from '../utils/calificacion'
 
 const STEPS = [
   {
@@ -46,10 +47,10 @@ const STEPS = [
 function buildPayload(answers, form) {
   return {
     ...buildQuizUpdatePayload(answers),
-    name: form.name,
-    email: form.email,
-    phone: form.phone,
-    ig: form.ig.trim() || undefined,
+    name: form.name.trim(),
+    email: form.email.trim(),
+    phone: form.phone.trim(),
+    ig: form.ig.trim(),
   }
 }
 
@@ -57,14 +58,8 @@ export default function Quiz({ onComplete }) {
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState(INITIAL_ANSWERS)
   const [form, setForm] = useState({ name: '', email: '', phone: '', ig: '' })
-  const [leadId, setLeadId] = useState(null)
-  const leadIdRef = useRef(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-
-  useEffect(() => {
-    leadIdRef.current = leadId
-  }, [leadId])
 
   const step = STEPS[current]
   const progress = ((current + 1) / STEPS.length) * 100
@@ -73,7 +68,9 @@ export default function Quiz({ onComplete }) {
   const canNext = (() => {
     if (step.type === 'options') return !!answers[step.id]
     if (step.type === 'bottleneck') return isBottleneckValid(answers)
-    if (step.type === 'form') return form.name && form.email && form.phone
+    if (step.type === 'form') {
+      return form.name.trim() && form.email.trim() && form.phone.trim() && form.ig.trim()
+    }
     return false
   })()
 
@@ -110,20 +107,6 @@ export default function Quiz({ onComplete }) {
 
   const handleNext = async () => {
     if (step.type === 'form') {
-      try {
-        const res = await submitLead({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          ig: form.ig.trim() || undefined,
-        })
-        if (res?.id) {
-          setLeadId(res.id)
-          leadIdRef.current = res.id
-        }
-      } catch (e) {
-        console.error('Error al guardar contacto:', e)
-      }
       setCurrent((c) => c + 1)
       return
     }
@@ -133,25 +116,19 @@ export default function Quiz({ onComplete }) {
       setError(null)
       try {
         const payload = buildPayload(answers, form)
+        const calificado = esCalificado(payload)
+        const res = await submitLead({ ...payload, calificado })
 
-        let waitedId = leadId
-        if (!waitedId) {
-          const maxWaitMs = 5000
-          const stepMs = 150
-          let waited = 0
-          while (!waitedId && waited < maxWaitMs) {
-            await new Promise((r) => setTimeout(r, stepMs))
-            waited += stepMs
-            waitedId = leadIdRef.current
-          }
+        if (!res?.id) {
+          throw new Error('No se pudo crear tu registro. Probá de nuevo.')
         }
 
-        if (!waitedId) {
-          throw new Error('No se pudo vincular tu información de contacto. Probá completar el formulario de nuevo.')
-        }
-
-        await updateLead(waitedId, buildQuizUpdatePayload(answers))
-        onComplete(payload)
+        onComplete({
+          ...payload,
+          id: res.id,
+          access_code: res.access_code,
+          calificado,
+        })
       } catch (e) {
         setError(e.message || 'Algo falló. Probá de nuevo.')
         setLoading(false)

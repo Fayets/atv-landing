@@ -4,6 +4,7 @@ import { buildSetterWhatsappUrl } from '../utils/buildSetterWhatsappUrl'
 import styles from './DashboardPage.module.css'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+const PAGE_SIZE = 20
 
 const BOTTLENECK_AREA_OPTIONS = ['Marketing', 'Ventas', 'Producto']
 
@@ -255,6 +256,7 @@ export default function DashboardPage() {
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [deleteError, setDeleteError] = useState(null)
   const [showAnalytics, setShowAnalytics] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     let cancelled = false
@@ -293,6 +295,10 @@ export default function DashboardPage() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [showAnalytics])
 
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [search, areaFilter, statusFilter, responsableFilter])
+
   const filteredLeads = useMemo(() => {
     const q = search.trim().toLowerCase()
     return leads.filter((lead) => {
@@ -312,6 +318,20 @@ export default function DashboardPage() {
       )
     })
   }, [leads, search, areaFilter, statusFilter, responsableFilter])
+
+  const totalPages = Math.max(1, Math.ceil(filteredLeads.length / PAGE_SIZE))
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages)
+  }, [currentPage, totalPages])
+
+  const paginatedLeads = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE
+    return filteredLeads.slice(start, start + PAGE_SIZE)
+  }, [filteredLeads, currentPage])
+
+  const pageRangeStart = filteredLeads.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1
+  const pageRangeEnd = Math.min(currentPage * PAGE_SIZE, filteredLeads.length)
 
   const metrics = useMemo(() => {
     const total = metricsData?.total ?? 0
@@ -590,6 +610,7 @@ export default function DashboardPage() {
                   <th>#</th>
                   <th>Nombre</th>
                   <th>WhatsApp</th>
+                  <th>IG</th>
                   <th>Clave</th>
                   <th>Responsable</th>
                   <th>Situación</th>
@@ -603,10 +624,10 @@ export default function DashboardPage() {
               <tbody>
                 {filteredLeads.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className={styles.cellMuted}>Sin registrados todavía</td>
+                    <td colSpan={12} className={styles.cellMuted}>Sin registrados todavía</td>
                   </tr>
                 ) : (
-                  filteredLeads.map((lead) => (
+                  paginatedLeads.map((lead) => (
                     <tr key={lead.id} onClick={() => openPanel(lead)} style={getRowStyle(lead.calificado)}>
                       <td className={styles.cellMuted}>{lead.id}</td>
                       <td className={styles.cellName}>{lead.name}</td>
@@ -620,6 +641,22 @@ export default function DashboardPage() {
                           <i className="ti ti-brand-whatsapp" />
                           {lead.phone}
                         </a>
+                      </td>
+                      <td>
+                        {lead.ig ? (
+                          <a
+                            href={igToUrl(lead.ig)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.igLink}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <i className="ti ti-brand-instagram" />
+                            {lead.ig.startsWith('@') ? lead.ig : `@${lead.ig}`}
+                          </a>
+                        ) : (
+                          <span className={styles.cellMuted}>—</span>
+                        )}
                       </td>
                       <td>
                         <span className={styles.accessCode}>{lead.access_code}</span>
@@ -655,6 +692,36 @@ export default function DashboardPage() {
               </tbody>
             </table>
           </div>
+          {filteredLeads.length > 0 && (
+            <footer className={styles.pagination}>
+              <span className={styles.paginationInfo}>
+                Mostrando {pageRangeStart}–{pageRangeEnd} de {filteredLeads.length}
+              </span>
+              <div className={styles.paginationControls}>
+                <button
+                  type="button"
+                  className={styles.paginationBtn}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
+                >
+                  <i className="ti ti-chevron-left" />
+                  Anterior
+                </button>
+                <span className={styles.paginationPage}>
+                  Página {currentPage} de {totalPages}
+                </span>
+                <button
+                  type="button"
+                  className={styles.paginationBtn}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage >= totalPages}
+                >
+                  Siguiente
+                  <i className="ti ti-chevron-right" />
+                </button>
+              </div>
+            </footer>
+          )}
         </section>
       </main>
 
