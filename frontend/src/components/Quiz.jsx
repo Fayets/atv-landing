@@ -8,6 +8,7 @@ import {
   buildQuizUpdatePayload,
   INITIAL_ANSWERS,
   isBottleneckValid,
+  REVENUE_OPTIONS,
 } from '../data/landingQuiz'
 import { esCalificado } from '../utils/calificacion'
 
@@ -40,7 +41,7 @@ const STEPS = [
     id: 'revenue',
     q: '¿Cuánto facturas por mes hoy?',
     type: 'options',
-    opts: ['$1k a $5k', '$5k a $10k', '$10k a $30k', '$30k a $50k', '+$50k'],
+    opts: REVENUE_OPTIONS,
   },
 ]
 

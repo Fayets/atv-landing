@@ -1,5 +1,5 @@
-const REVENUE_CAL = ['$10k a $30k', '$30k a $50k', '+$50k']
+import { REVENUE_QUALIFIED } from '../data/landingQuiz'
 
 export function esCalificado(data) {
-  return REVENUE_CAL.includes(data.revenue)
+  return REVENUE_QUALIFIED.includes(data.revenue)
 }

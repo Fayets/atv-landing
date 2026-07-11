@@ -39,6 +39,17 @@ export const INITIAL_ANSWERS = {
   revenue: '',
 }
 
+export const REVENUE_OPTIONS = [
+  '$0 a $1k',
+  '$1k a $5k',
+  '$5k a $10k',
+  '$10k a $30k',
+  '$30k a $50k',
+  '+$50k',
+]
+
+export const REVENUE_QUALIFIED = ['$10k a $30k', '$30k a $50k', '+$50k']
+
 export const QUIZ_STEPS = [
   {
     id: 'contact',
@@ -72,7 +83,7 @@ export const QUIZ_STEPS = [
     title: 'CALIFICACIÓN',
     question: '¿Cuánto facturas por mes hoy?',
     type: 'options',
-    opts: ['$1k a $5k', '$5k a $10k', '$10k a $30k', '$30k a $50k', '+$50k'],
+    opts: REVENUE_OPTIONS,
   },
 ]
 

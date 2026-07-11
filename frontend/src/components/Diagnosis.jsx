@@ -32,6 +32,7 @@ const AREA_BODY = {
 const CONTEXT_PARAGRAPH = 'Esto no es casualidad ni mala suerte. Es un patrón que vemos una y otra vez en negocios con tu mismo perfil — y la buena noticia es que tiene solución concreta, no genérica.'
 
 const REVENUE_CLOSING = {
+  '$0 a $1k': 'Estás en la etapa donde cada decisión cuenta el doble. Resolver esto ahora te evita meses de esfuerzo sin retorno.',
   '$1k a $5k': 'Esto no se resuelve facturando más. Se resuelve resolviendo esto primero — sino, vas a seguir en el mismo lugar facturando más esfuerzo, no más resultado.',
   '$5k a $10k': 'Estás en el momento exacto donde esto se corrige rápido o se vuelve un techo de cristal. Cada mes que pasa sin resolverlo, se hace más caro de corregir.',
   '$10k a $30k': 'A este nivel, el problema ya no es chico. Si no lo corregís ahora, no vas a escalar — vas a repetir el mismo error con más volumen.',

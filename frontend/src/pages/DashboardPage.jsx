@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { fetchLeads as getLeads, updateLead, deleteLead } from '../api/leads'
+import { REVENUE_OPTIONS } from '../data/landingQuiz'
 import { buildSetterWhatsappUrl } from '../utils/buildSetterWhatsappUrl'
 import styles from './DashboardPage.module.css'
 
@@ -87,6 +88,16 @@ function exportCsv(leads) {
 function objectToSortedEntries(obj) {
   if (!obj) return []
   return Object.entries(obj).sort((a, b) => b[1] - a[1])
+}
+
+function sortRevenueEntries(entries) {
+  const order = new Map(REVENUE_OPTIONS.map((opt, index) => [opt, index]))
+  return [...entries].sort((a, b) => {
+    const aIndex = order.get(a[0]) ?? 999
+    const bIndex = order.get(b[0]) ?? 999
+    if (aIndex !== bIndex) return aIndex - bIndex
+    return b[1] - a[1]
+  })
 }
 
 function HorizontalBar({ label, value, max }) {
@@ -246,6 +257,7 @@ export default function DashboardPage() {
   const [areaFilter, setAreaFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [responsableFilter, setResponsableFilter] = useState('')
+  const [revenueFilter, setRevenueFilter] = useState('')
   const [selectedId, setSelectedId] = useState(null)
   const [noteDraft, setNoteDraft] = useState('')
   const [regenConfirming, setRegenConfirming] = useState(false)
@@ -297,13 +309,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [search, areaFilter, statusFilter, responsableFilter])
+  }, [search, areaFilter, statusFilter, responsableFilter, revenueFilter])
 
   const filteredLeads = useMemo(() => {
     const q = search.trim().toLowerCase()
     return leads.filter((lead) => {
       if (areaFilter && !(lead.bottleneck_areas || []).includes(areaFilter)) return false
       if (responsableFilter && lead.responsable !== responsableFilter) return false
+      if (revenueFilter && lead.revenue !== revenueFilter) return false
       if (statusFilter === 'pending' && lead.contacted) return false
       if (statusFilter === 'contacted' && !lead.contacted) return false
       if (statusFilter === 'complete' && !isLeadComplete(lead)) return false
@@ -317,7 +330,7 @@ export default function DashboardPage() {
         || (lead.access_code || '').toLowerCase().includes(q)
       )
     })
-  }, [leads, search, areaFilter, statusFilter, responsableFilter])
+  }, [leads, search, areaFilter, statusFilter, responsableFilter, revenueFilter])
 
   const totalPages = Math.max(1, Math.ceil(filteredLeads.length / PAGE_SIZE))
 
@@ -361,11 +374,17 @@ export default function DashboardPage() {
     () => objectToSortedEntries(metricsData?.by_sub_obstacle).slice(0, 8),
     [metricsData],
   )
-  const revenueData = useMemo(() => objectToSortedEntries(metricsData?.by_revenue), [metricsData])
+  const revenueData = useMemo(
+    () => sortRevenueEntries(objectToSortedEntries(metricsData?.by_revenue)),
+    [metricsData],
+  )
   const maxAvatar = avatarData[0]?.[1] ?? 1
   const maxBottleneckArea = bottleneckAreaData[0]?.[1] ?? 1
   const maxSubObstacle = subObstacleData[0]?.[1] ?? 1
-  const maxRevenue = revenueData[0]?.[1] ?? 1
+  const maxRevenue = useMemo(
+    () => Math.max(...revenueData.map((d) => d[1]), 1),
+    [revenueData],
+  )
 
   const selectedLead = leads.find((l) => l.id === selectedId) ?? null
 
@@ -580,6 +599,12 @@ export default function DashboardPage() {
               <option value="">Todos los responsables</option>
               <option value="Lucas">Lucas</option>
               <option value="Jero">Jero</option>
+            </select>
+            <select className={styles.select} value={revenueFilter} onChange={(e) => setRevenueFilter(e.target.value)}>
+              <option value="">Todas las facturaciones</option>
+              {REVENUE_OPTIONS.map((revenue) => (
+                <option key={revenue} value={revenue}>{revenue}</option>
+              ))}
             </select>
             <select className={styles.select} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               <option value="all">Todos</option>
