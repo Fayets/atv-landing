@@ -46,6 +46,11 @@ function formatDateFull(iso) {
   })
 }
 
+function igToUrl(ig) {
+  const handle = (ig || '').trim().replace(/^@/, '')
+  return handle ? `https://instagram.com/${handle}` : null
+}
+
 function downloadFile(filename, content, mime) {
   const blob = new Blob([content], { type: mime })
   const url = URL.createObjectURL(blob)
@@ -63,7 +68,7 @@ function exportEmails(leads) {
 
 function exportCsv(leads) {
   const headers = [
-    'id', 'name', 'email', 'phone', 'access_code', 'avatar',
+    'id', 'name', 'email', 'phone', 'ig', 'access_code', 'avatar',
     'bottleneck_areas', 'bottleneck_marketing', 'bottleneck_ventas',
     'bottleneck_producto', 'bottleneck_sistemas', 'revenue',
     'created_at', 'contacted', 'notes',
@@ -302,6 +307,7 @@ export default function DashboardPage() {
         lead.name.toLowerCase().includes(q)
         || lead.email.toLowerCase().includes(q)
         || lead.phone.toLowerCase().includes(q)
+        || (lead.ig || '').toLowerCase().includes(q)
         || (lead.access_code || '').toLowerCase().includes(q)
       )
     })
@@ -714,6 +720,17 @@ export default function DashboardPage() {
                 <i className="ti ti-brand-whatsapp" />
                 {selectedLead.phone}
               </a>
+              {selectedLead.ig && (
+                <a
+                  href={igToUrl(selectedLead.ig)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.panelLink}
+                >
+                  <i className="ti ti-brand-instagram" />
+                  {selectedLead.ig.startsWith('@') ? selectedLead.ig : `@${selectedLead.ig}`}
+                </a>
+              )}
             </section>
 
             <section className={styles.panelSection}>

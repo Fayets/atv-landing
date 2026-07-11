@@ -7,12 +7,14 @@ class LeadCreate(BaseModel):
     name: str
     email: str
     phone: str
+    ig: Optional[str] = None
     calificado: Optional[bool] = None
 
 
 class LeadUpdate(BaseModel):
     contacted: Optional[bool] = None
     notes: Optional[str] = None
+    ig: Optional[str] = None
     responsable: Optional[str] = None
     avatar: Optional[str] = None
     bottleneck_areas: Optional[List[str]] = None
@@ -29,6 +31,7 @@ class LeadOut(BaseModel):
     name: str
     email: str
     phone: str
+    ig: Optional[str] = None
     access_code: str
     avatar: Optional[str] = None
     bottleneck_areas: Optional[List[str]] = None

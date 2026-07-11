@@ -9,6 +9,7 @@ class Lead(db.Entity):
     name         = Required(str)
     email        = Required(str)
     phone        = Required(str)
+    ig           = Optional(str)
     access_code  = Required(str, unique=True)
 
     avatar               = Optional(str)

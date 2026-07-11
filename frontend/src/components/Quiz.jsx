@@ -49,13 +49,14 @@ function buildPayload(answers, form) {
     name: form.name,
     email: form.email,
     phone: form.phone,
+    ig: form.ig.trim() || undefined,
   }
 }
 
 export default function Quiz({ onComplete }) {
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState(INITIAL_ANSWERS)
-  const [form, setForm] = useState({ name: '', email: '', phone: '' })
+  const [form, setForm] = useState({ name: '', email: '', phone: '', ig: '' })
   const [leadId, setLeadId] = useState(null)
   const leadIdRef = useRef(null)
   const [loading, setLoading] = useState(false)
@@ -114,6 +115,7 @@ export default function Quiz({ onComplete }) {
           name: form.name,
           email: form.email,
           phone: form.phone,
+          ig: form.ig.trim() || undefined,
         })
         if (res?.id) {
           setLeadId(res.id)
@@ -261,6 +263,13 @@ export default function Quiz({ onComplete }) {
               placeholder="Tu email"
               value={form.email}
               onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+            />
+            <input
+              className={styles.input}
+              type="text"
+              placeholder="Tu Instagram (@usuario)"
+              value={form.ig}
+              onChange={(e) => setForm((f) => ({ ...f, ig: e.target.value }))}
             />
             {error && <p className={styles.error}>{error}</p>}
           </div>

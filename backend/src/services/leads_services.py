@@ -38,6 +38,8 @@ class LeadsServices:
                 "contacted": False,
                 "responsable": responsable,
             }
+            if data.ig is not None:
+                lead_kwargs["ig"] = data.ig.strip() or None
             if data.calificado is not None:
                 lead_kwargs["calificado"] = data.calificado
             lead = Lead(**lead_kwargs)
@@ -69,6 +71,8 @@ class LeadsServices:
                 lead.contacted = data.contacted
             if data.notes is not None:
                 lead.notes = data.notes
+            if data.ig is not None:
+                lead.ig = data.ig.strip() or None
             if data.avatar is not None:
                 lead.avatar = data.avatar
             if data.bottleneck_areas is not None:
@@ -174,6 +178,7 @@ class LeadsServices:
             "name": lead.name,
             "email": lead.email,
             "phone": lead.phone,
+            "ig": lead.ig,
             "access_code": lead.access_code,
             "avatar": lead.avatar,
             "bottleneck_areas": self._deserialize_list(lead.bottleneck_areas),

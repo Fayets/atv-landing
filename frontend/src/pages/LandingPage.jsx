@@ -21,7 +21,7 @@ const CUPOS_TICK_MS = 25000
 export default function LandingPage({ onComplete }) {
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState(INITIAL_ANSWERS)
-  const [form, setForm] = useState({ name: '', email: '', phone: '' })
+  const [form, setForm] = useState({ name: '', email: '', phone: '', ig: '' })
   const [leadId, setLeadId] = useState(null)
   const [accessCode, setAccessCode] = useState(null)
   const leadIdRef = useRef(null)
@@ -109,6 +109,7 @@ export default function LandingPage({ onComplete }) {
           name: form.name.trim(),
           email: form.email.trim(),
           phone: form.phone.trim(),
+          ig: form.ig.trim() || undefined,
         })
         if (res?.id) {
           setLeadId(res.id)
@@ -342,6 +343,14 @@ export default function LandingPage({ onComplete }) {
                     value={form.phone}
                     onChange={(phone) => setForm((prev) => ({ ...prev, phone }))}
                     placeholder="Tu número de WhatsApp"
+                  />
+                  <input
+                    className={styles.input}
+                    type="text"
+                    name="ig"
+                    placeholder="Tu Instagram (@usuario)"
+                    value={form.ig}
+                    onChange={handleChange}
                   />
                 </>
               )}
