@@ -127,39 +127,22 @@ export default function LandingPage({ onComplete }) {
           throw new Error('No se pudo crear tu registro. Probá de nuevo.')
         }
 
-        const leadEventId = `lead_${res.id}_${Date.now()}`
-
-        if (typeof window.fbq !== 'undefined') {
-          window.fbq('track', 'Lead', {
-            content_name: 'webinar_registro',
-          }, {
-            eventID: leadEventId,
-          })
-        }
-
-        await sendCapiEvent(res.id, {
-          event_name: 'Lead',
-          event_id: leadEventId,
-          email: payload.email,
-          phone: payload.phone,
-        })
-
         if (esCalificado(payload)) {
-          const calEventId = `cal_${res.id}_${Date.now()}`
+          const leadEventId = `lead_${res.id}_${Date.now()}`
 
           if (typeof window.fbq !== 'undefined') {
-            window.fbq('track', 'SubmitApplication', {
+            window.fbq('track', 'Lead', {
               content_name: 'webinar_calificado',
             }, {
-              eventID: calEventId,
+              eventID: leadEventId,
             })
           }
 
           await sendCapiEvent(res.id, {
-            event_name: 'SubmitApplication',
-            event_id: calEventId,
-            email: payload.email,
-            phone: payload.phone,
+            event_name: 'Lead',
+            event_id: leadEventId,
+            email: form.email,
+            phone: form.phone,
           })
         }
 
