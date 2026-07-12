@@ -9,7 +9,7 @@ from src.services.leads_services import LeadsServices
 router = APIRouter()
 svc = LeadsServices()
 
-PIXEL_ID = "1635908078102547"
+PIXEL_ID = "1502839491117808"
 META_ACCESS_TOKEN = os.getenv("META_CAPI_TOKEN", "")
 
 
