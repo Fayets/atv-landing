@@ -40,15 +40,30 @@ export const INITIAL_ANSWERS = {
 }
 
 export const REVENUE_OPTIONS = [
-  '$0 a $1k',
-  '$1k a $5k',
-  '$5k a $10k',
-  '$10k a $30k',
-  '$30k a $50k',
-  '+$50k',
+  '0 a 250',
+  '250 a 500',
+  '500 a 1k',
+  '1k a 3k',
+  '3k a 5k',
+  '5k a 10k',
+  '10k a 30k',
+  '30k a 50k',
+  '+50k',
 ]
 
-export const REVENUE_QUALIFIED = ['$5k a $10k', '$10k a $30k', '$30k a $50k', '+$50k']
+export const REVENUE_QUALIFIED = ['5k a 10k', '10k a 30k', '30k a 50k', '+50k']
+
+export const AVATAR_QUALIFIED = [
+  'Coaching / Mentoria / Consultoria',
+  'Creador con infoproducto',
+  'Experto en infoproductos / Growth Operator',
+  'Dueño de negocio con infoproducto',
+  'Dueño de agencia',
+  'Profesional independiente',
+  'CCO (director)',
+  'Infoproducto de ecommerce',
+  'Agente inmobiliarios / Real State con infoproducto',
+]
 
 export const QUIZ_STEPS = [
   {
@@ -63,12 +78,22 @@ export const QUIZ_STEPS = [
     question: '¿Cuál es tu perfil hoy?',
     type: 'options',
     opts: [
-      'Creador de contenido',
-      'Creador/infoproductos',
+      'Creador de contenido sin infoproducto',
+      'Coaching / Mentoria / Consultoria',
+      'Creador con infoproducto',
       'Experto en infoproductos / Growth Operator',
-      'Dueño de negocio',
+      'Dueño de negocio con tienda fisica',
+      'Dueño de negocio con infoproducto',
       'Dueño de agencia',
-      'Habilidades de alto valor',
+      'Habilidades de alto valor (setter, closer, editor de videos, etc)',
+      'Profesional independiente',
+      'CCO (director)',
+      'Tienda fisica',
+      'Tienda de ecommerce',
+      'Infoproducto de ecommerce',
+      'No tengo negocio',
+      'Agente inmobiliarios / Real State sin infoproducto',
+      'Agente inmobiliarios / Real State con infoproducto',
       'Otro',
     ],
   },
