@@ -1,8 +1,8 @@
 REVENUE_QUALIFIED = [
-    "5k a 10k",
-    "10k a 30k",
-    "30k a 50k",
-    "+50k",
+    "$5k a 10k",
+    "$10k a 30k",
+    "$30k a 50k",
+    "+$50k",
 ]
 
 AVATAR_QUALIFIED = [

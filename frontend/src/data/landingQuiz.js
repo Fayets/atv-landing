@@ -2,10 +2,10 @@ export const BOTTLENECK_AREAS = ['Marketing', 'Ventas', 'Producto']
 
 export const BOTTLENECK_SUB_OPTS = {
   Marketing: [
-    'No genero suficientes leads',
     'Mis leads son de mala calidad / no califican',
     'No tengo contenido que convierta (soy viral pero no vendo)',
     'Dependo de anuncios y mi orgánico no funciona',
+    'No genero suficientes leads',
     'No tengo métricas claras de mi negocio',
   ],
   Ventas: [
@@ -40,18 +40,18 @@ export const INITIAL_ANSWERS = {
 }
 
 export const REVENUE_OPTIONS = [
-  '0 a 250',
-  '250 a 500',
-  '500 a 1k',
-  '1k a 3k',
-  '3k a 5k',
-  '5k a 10k',
-  '10k a 30k',
-  '30k a 50k',
-  '+50k',
+  '$0 a 250 usd',
+  '$250 a 500 usd',
+  '$500 a 1k',
+  '$1k a 3k',
+  '$3k a 5k',
+  '$5k a 10k',
+  '$10k a 30k',
+  '$30k a 50k',
+  '+$50k',
 ]
 
-export const REVENUE_QUALIFIED = ['5k a 10k', '10k a 30k', '30k a 50k', '+50k']
+export const REVENUE_QUALIFIED = ['$5k a 10k', '$10k a 30k', '$30k a 50k', '+$50k']
 
 export const AVATAR_OPTIONS = [
   'Creador de contenido sin infoproducto',
