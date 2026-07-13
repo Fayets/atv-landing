@@ -157,13 +157,34 @@ function AnalyticsCharts({
   noCalificadosCount,
 }) {
   return (
-    <>
-      <div className={styles.analyticsMetrics}>
-        <div className={styles.metricCard}>
-          <div className={styles.metricHead}>
-            <span className={styles.metricLabel}>Calificados</span>
-            <i className="ti ti-rosette-discount-check" />
-          </div>
+    <section className={styles.chartsGrid}>
+      <div className={`${styles.chartCard} ${styles.chartCardDaily}`}>
+        <h2 className={styles.chartTitle}>Registros últimos 14 días</h2>
+        <div className={styles.barChart}>
+          {dailyData.map((day) => (
+            <div
+              key={day.key}
+              className={styles.barCol}
+              title={`${day.count} registro${day.count === 1 ? '' : 's'} el ${day.label}`}
+            >
+              <div className={styles.barTrack}>
+                <div
+                  className={styles.barFill}
+                  style={{
+                    height: day.count > 0
+                      ? `${Math.max((day.count / maxDaily) * 100, 2)}%`
+                      : '0',
+                    minHeight: day.count > 0 ? 2 : 0,
+                  }}
+                />
+              </div>
+              <span className={styles.barCount}>{day.count}</span>
+              <span className={styles.barLabel}>{day.label}</span>
+            </div>
+          ))}
+        </div>
+        <div className={styles.dailyCalificados}>
+          <span className={styles.dailyCalificadosLabel}>Calificados</span>
           <div className={styles.metricSplit}>
             <span className={styles.metricSplitLucas}>Sí: {calificadosCount}</span>
             <span className={styles.metricSplitSep}>|</span>
@@ -171,75 +192,47 @@ function AnalyticsCharts({
           </div>
         </div>
       </div>
-      <section className={styles.chartsGrid}>
-        <div className={`${styles.chartCard} ${styles.chartCardDaily}`}>
-          <h2 className={styles.chartTitle}>Registros últimos 14 días</h2>
-          <div className={styles.barChart}>
-            {dailyData.map((day) => (
-              <div
-                key={day.key}
-                className={styles.barCol}
-                title={`${day.count} registro${day.count === 1 ? '' : 's'} el ${day.label}`}
-              >
-                <div className={styles.barTrack}>
-                  <div
-                    className={styles.barFill}
-                    style={{
-                      height: day.count > 0
-                        ? `${Math.max((day.count / maxDaily) * 100, 2)}%`
-                        : '0',
-                      minHeight: day.count > 0 ? 2 : 0,
-                    }}
-                  />
-                </div>
-                <span className={styles.barCount}>{day.count}</span>
-                <span className={styles.barLabel}>{day.label}</span>
-              </div>
-            ))}
-          </div>
+      <div className={styles.chartCard}>
+        <h2 className={styles.chartTitle}>Por situación</h2>
+        <div className={styles.hBarList}>
+          {avatarData.length === 0 ? (
+            <p className={styles.cellMuted}>Sin datos todavía</p>
+          ) : avatarData.map(([label, value]) => (
+            <HorizontalBar key={label} label={label} value={value} max={maxAvatar} />
+          ))}
         </div>
-        <div className={styles.chartCard}>
-          <h2 className={styles.chartTitle}>Por situación</h2>
-          <div className={styles.hBarList}>
-            {avatarData.length === 0 ? (
-              <p className={styles.cellMuted}>Sin datos todavía</p>
-            ) : avatarData.map(([label, value]) => (
-              <HorizontalBar key={label} label={label} value={value} max={maxAvatar} />
-            ))}
-          </div>
+      </div>
+      <div className={styles.chartCard}>
+        <h2 className={styles.chartTitle}>Por cuello de botella</h2>
+        <div className={styles.hBarList}>
+          {bottleneckAreaData.length === 0 ? (
+            <p className={styles.cellMuted}>Sin datos todavía</p>
+          ) : bottleneckAreaData.map(([label, value]) => (
+            <HorizontalBar key={label} label={label} value={value} max={maxBottleneckArea} />
+          ))}
         </div>
-        <div className={styles.chartCard}>
-          <h2 className={styles.chartTitle}>Por cuello de botella</h2>
-          <div className={styles.hBarList}>
-            {bottleneckAreaData.length === 0 ? (
-              <p className={styles.cellMuted}>Sin datos todavía</p>
-            ) : bottleneckAreaData.map(([label, value]) => (
-              <HorizontalBar key={label} label={label} value={value} max={maxBottleneckArea} />
-            ))}
-          </div>
+      </div>
+      <div className={styles.chartCard}>
+        <h2 className={styles.chartTitle}>Top obstáculos</h2>
+        <div className={styles.hBarList}>
+          {subObstacleData.length === 0 ? (
+            <p className={styles.cellMuted}>Sin datos todavía</p>
+          ) : subObstacleData.map(([label, value]) => (
+            <HorizontalBar key={label} label={label} value={value} max={maxSubObstacle} />
+          ))}
         </div>
-        <div className={styles.chartCard}>
-          <h2 className={styles.chartTitle}>Top obstáculos</h2>
-          <div className={styles.hBarList}>
-            {subObstacleData.length === 0 ? (
-              <p className={styles.cellMuted}>Sin datos todavía</p>
-            ) : subObstacleData.map(([label, value]) => (
-              <HorizontalBar key={label} label={label} value={value} max={maxSubObstacle} />
-            ))}
-          </div>
+      </div>
+      <div className={styles.chartCard}>
+        <h2 className={styles.chartTitle}>Por facturación</h2>
+        <div className={styles.hBarList}>
+          {revenueData.length === 0 ? (
+            <p className={styles.cellMuted}>Sin datos todavía</p>
+          ) : revenueData.map(([label, value]) => (
+            <HorizontalBar key={label} label={label} value={value} max={maxRevenue} />
+          ))}
         </div>
-        <div className={styles.chartCard}>
-          <h2 className={styles.chartTitle}>Por facturación</h2>
-          <div className={styles.hBarList}>
-            {revenueData.length === 0 ? (
-              <p className={styles.cellMuted}>Sin datos todavía</p>
-            ) : revenueData.map(([label, value]) => (
-              <HorizontalBar key={label} label={label} value={value} max={maxRevenue} />
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
+      </div>
+    </section>
   )
 }
 
