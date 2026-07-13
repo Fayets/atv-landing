@@ -54,22 +54,22 @@ export const REVENUE_OPTIONS = [
 export const REVENUE_QUALIFIED = ['$5k a 10k', '$10k a 30k', '$30k a 50k', '+$50k']
 
 export const AVATAR_OPTIONS = [
-  'Creador de contenido sin infoproducto',
   'Coaching / Mentoria / Consultoria',
   'Creador con infoproducto',
+  'Creador de contenido sin infoproducto',
   'Experto en infoproductos / Growth Operator',
-  'Dueño de negocio con tienda fisica',
   'Dueño de negocio con infoproducto',
+  'Dueño de negocio con tienda fisica',
   'Dueño de agencia',
-  'Habilidades de alto valor (setter, closer, editor de videos, etc)',
-  'Profesional independiente',
   'CCO (director)',
-  'Tienda fisica',
   'Tienda de ecommerce',
   'Infoproducto de ecommerce',
-  'No tengo negocio',
-  'Agente inmobiliarios / Real State sin infoproducto',
+  'Tienda fisica',
   'Agente inmobiliarios / Real State con infoproducto',
+  'Agente inmobiliarios / Real State sin infoproducto',
+  'Profesional independiente',
+  'Habilidades de alto valor (setter, closer, editor de videos, etc)',
+  'No tengo negocio',
   'Otro',
 ]
 
