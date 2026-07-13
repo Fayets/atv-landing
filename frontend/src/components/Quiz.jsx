@@ -3,6 +3,7 @@ import styles from './Quiz.module.css'
 import { submitLead } from '../api/leads'
 import {
   AREA_TO_ANSWER_KEY,
+  AVATAR_OPTIONS,
   BOTTLENECK_AREAS,
   BOTTLENECK_SUB_OPTS,
   buildQuizUpdatePayload,
@@ -22,15 +23,7 @@ const STEPS = [
     id: 'avatar',
     q: '¿Cuál es tu perfil hoy?',
     type: 'options',
-    opts: [
-      'Creador de contenido',
-      'Creador/infoproductos',
-      'Experto en infoproductos / Growth Operator',
-      'Dueño de negocio',
-      'Dueño de agencia',
-      'Habilidades de alto valor',
-      'Otro',
-    ],
+    opts: AVATAR_OPTIONS,
   },
   {
     id: 'bottleneck',

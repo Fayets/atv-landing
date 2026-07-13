@@ -53,6 +53,26 @@ export const REVENUE_OPTIONS = [
 
 export const REVENUE_QUALIFIED = ['5k a 10k', '10k a 30k', '30k a 50k', '+50k']
 
+export const AVATAR_OPTIONS = [
+  'Creador de contenido sin infoproducto',
+  'Coaching / Mentoria / Consultoria',
+  'Creador con infoproducto',
+  'Experto en infoproductos / Growth Operator',
+  'Dueño de negocio con tienda fisica',
+  'Dueño de negocio con infoproducto',
+  'Dueño de agencia',
+  'Habilidades de alto valor (setter, closer, editor de videos, etc)',
+  'Profesional independiente',
+  'CCO (director)',
+  'Tienda fisica',
+  'Tienda de ecommerce',
+  'Infoproducto de ecommerce',
+  'No tengo negocio',
+  'Agente inmobiliarios / Real State sin infoproducto',
+  'Agente inmobiliarios / Real State con infoproducto',
+  'Otro',
+]
+
 export const AVATAR_QUALIFIED = [
   'Coaching / Mentoria / Consultoria',
   'Creador con infoproducto',
@@ -77,25 +97,7 @@ export const QUIZ_STEPS = [
     title: 'SITUACIÓN ACTUAL',
     question: '¿Cuál es tu perfil hoy?',
     type: 'options',
-    opts: [
-      'Creador de contenido sin infoproducto',
-      'Coaching / Mentoria / Consultoria',
-      'Creador con infoproducto',
-      'Experto en infoproductos / Growth Operator',
-      'Dueño de negocio con tienda fisica',
-      'Dueño de negocio con infoproducto',
-      'Dueño de agencia',
-      'Habilidades de alto valor (setter, closer, editor de videos, etc)',
-      'Profesional independiente',
-      'CCO (director)',
-      'Tienda fisica',
-      'Tienda de ecommerce',
-      'Infoproducto de ecommerce',
-      'No tengo negocio',
-      'Agente inmobiliarios / Real State sin infoproducto',
-      'Agente inmobiliarios / Real State con infoproducto',
-      'Otro',
-    ],
+    opts: AVATAR_OPTIONS,
   },
   {
     id: 'bottleneck',

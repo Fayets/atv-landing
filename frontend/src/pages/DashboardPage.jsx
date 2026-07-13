@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { fetchLeads as getLeads, updateLead, deleteLead } from '../api/leads'
-import { REVENUE_OPTIONS } from '../data/landingQuiz'
+import { AVATAR_OPTIONS, REVENUE_OPTIONS } from '../data/landingQuiz'
 import { buildSetterWhatsappUrl } from '../utils/buildSetterWhatsappUrl'
 import styles from './DashboardPage.module.css'
 
@@ -258,6 +258,7 @@ export default function DashboardPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [responsableFilter, setResponsableFilter] = useState('')
   const [revenueFilter, setRevenueFilter] = useState('')
+  const [avatarFilter, setAvatarFilter] = useState('')
   const [selectedId, setSelectedId] = useState(null)
   const [noteDraft, setNoteDraft] = useState('')
   const [regenConfirming, setRegenConfirming] = useState(false)
@@ -309,7 +310,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [search, areaFilter, statusFilter, responsableFilter, revenueFilter])
+  }, [search, areaFilter, statusFilter, responsableFilter, revenueFilter, avatarFilter])
 
   const filteredLeads = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -317,10 +318,13 @@ export default function DashboardPage() {
       if (areaFilter && !(lead.bottleneck_areas || []).includes(areaFilter)) return false
       if (responsableFilter && lead.responsable !== responsableFilter) return false
       if (revenueFilter && lead.revenue !== revenueFilter) return false
+      if (avatarFilter && lead.avatar !== avatarFilter) return false
       if (statusFilter === 'pending' && lead.contacted) return false
       if (statusFilter === 'contacted' && !lead.contacted) return false
       if (statusFilter === 'complete' && !isLeadComplete(lead)) return false
       if (statusFilter === 'solo-datos' && isLeadComplete(lead)) return false
+      if (statusFilter === 'calificado' && lead.calificado !== true) return false
+      if (statusFilter === 'no-calificado' && lead.calificado !== false) return false
       if (!q) return true
       return (
         lead.name.toLowerCase().includes(q)
@@ -330,7 +334,7 @@ export default function DashboardPage() {
         || (lead.access_code || '').toLowerCase().includes(q)
       )
     })
-  }, [leads, search, areaFilter, statusFilter, responsableFilter, revenueFilter])
+  }, [leads, search, areaFilter, statusFilter, responsableFilter, revenueFilter, avatarFilter])
 
   const totalPages = Math.max(1, Math.ceil(filteredLeads.length / PAGE_SIZE))
 
@@ -353,8 +357,33 @@ export default function DashboardPage() {
     const rate = total > 0 ? Math.round((contacted / total) * 100) : 0
     const lucasCount = leads.filter((l) => l.responsable === 'Lucas').length
     const jeroCount = leads.filter((l) => l.responsable === 'Jero').length
-    return { total, pending, contacted, rate, lucasCount, jeroCount }
+    const calificadosCount = leads.filter((l) => l.calificado === true).length
+    const noCalificadosCount = leads.filter((l) => l.calificado === false).length
+    return {
+      total,
+      pending,
+      contacted,
+      rate,
+      lucasCount,
+      jeroCount,
+      calificadosCount,
+      noCalificadosCount,
+    }
   }, [metricsData, leads])
+
+  const revenueFilterOptions = useMemo(() => {
+    const extras = leads
+      .map((l) => l.revenue)
+      .filter((value) => value && !REVENUE_OPTIONS.includes(value))
+    return [...REVENUE_OPTIONS, ...[...new Set(extras)]]
+  }, [leads])
+
+  const avatarFilterOptions = useMemo(() => {
+    const extras = leads
+      .map((l) => l.avatar)
+      .filter((value) => value && !AVATAR_OPTIONS.includes(value))
+    return [...AVATAR_OPTIONS, ...[...new Set(extras)]]
+  }, [leads])
 
   const dailyData = useMemo(() => (
     (metricsData?.daily ?? []).map((day) => ({
@@ -575,6 +604,17 @@ export default function DashboardPage() {
               <span className={styles.metricSplitJero}>Jero: {metrics.jeroCount}</span>
             </div>
           </div>
+          <div className={styles.metricCard}>
+            <div className={styles.metricHead}>
+              <span className={styles.metricLabel}>Calificados</span>
+              <i className="ti ti-rosette-discount-check" />
+            </div>
+            <div className={styles.metricSplit}>
+              <span className={styles.metricSplitLucas}>Sí: {metrics.calificadosCount}</span>
+              <span className={styles.metricSplitSep}>|</span>
+              <span className={styles.metricSplitJero}>No: {metrics.noCalificadosCount}</span>
+            </div>
+          </div>
         </section>
 
         <section className={styles.toolbar}>
@@ -600,9 +640,15 @@ export default function DashboardPage() {
               <option value="Lucas">Lucas</option>
               <option value="Jero">Jero</option>
             </select>
+            <select className={styles.select} value={avatarFilter} onChange={(e) => setAvatarFilter(e.target.value)}>
+              <option value="">Todas las situaciones</option>
+              {avatarFilterOptions.map((avatar) => (
+                <option key={avatar} value={avatar}>{avatar}</option>
+              ))}
+            </select>
             <select className={styles.select} value={revenueFilter} onChange={(e) => setRevenueFilter(e.target.value)}>
               <option value="">Todas las facturaciones</option>
-              {REVENUE_OPTIONS.map((revenue) => (
+              {revenueFilterOptions.map((revenue) => (
                 <option key={revenue} value={revenue}>{revenue}</option>
               ))}
             </select>
@@ -612,6 +658,8 @@ export default function DashboardPage() {
               <option value="contacted">Contactados</option>
               <option value="complete">Completos</option>
               <option value="solo-datos">Solo datos</option>
+              <option value="calificado">Calificados</option>
+              <option value="no-calificado">No calificados</option>
             </select>
           </div>
           <div className={styles.toolbarRight}>

@@ -57,8 +57,8 @@ class LeadsServices:
                 lead_kwargs["revenue"] = data.revenue
             if data.calificado is not None:
                 lead_kwargs["calificado"] = data.calificado
-            elif data.revenue is not None:
-                lead_kwargs["calificado"] = es_calificado(data.revenue)
+            elif data.avatar is not None or data.revenue is not None:
+                lead_kwargs["calificado"] = es_calificado(data.avatar, data.revenue)
             lead = Lead(**lead_kwargs)
             flush()
             return {"ok": True, "id": lead.id, "access_code": lead.access_code}
@@ -104,10 +104,10 @@ class LeadsServices:
                 lead.bottleneck_sistemas = json.dumps(data.bottleneck_sistemas)
             if data.revenue is not None:
                 lead.revenue = data.revenue
-                if data.calificado is None:
-                    lead.calificado = es_calificado(data.revenue)
             if data.calificado is not None:
                 lead.calificado = data.calificado
+            elif data.avatar is not None or data.revenue is not None:
+                lead.calificado = es_calificado(lead.avatar, lead.revenue)
             if data.responsable is not None:
                 lead.responsable = data.responsable
             return self._to_dict(lead)
@@ -138,7 +138,7 @@ class LeadsServices:
             sin_calificar = 0
 
             for lead in leads:
-                nuevo = es_calificado(lead.revenue)
+                nuevo = es_calificado(lead.avatar, lead.revenue)
                 if lead.calificado != nuevo:
                     lead.calificado = nuevo
                     updated += 1
