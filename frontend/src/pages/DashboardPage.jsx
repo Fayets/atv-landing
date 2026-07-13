@@ -37,6 +37,14 @@ function formatDateShort(iso) {
   })
 }
 
+function formatDateInputValue(iso) {
+  const d = parseUtcDate(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleDateString('en-CA', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+  })
+}
+
 function formatDateFull(iso) {
   return parseUtcDate(iso).toLocaleString('es-AR', {
     timeZone: 'America/Argentina/Buenos_Aires',
@@ -91,10 +99,31 @@ function objectToSortedEntries(obj) {
 }
 
 function sortRevenueEntries(entries) {
-  const order = new Map(REVENUE_OPTIONS.map((opt, index) => [opt, index]))
+  const orderList = [
+    ...REVENUE_OPTIONS.filter((opt) => !opt.startsWith('+')),
+    '$0 a $1k',
+    '$1k a $5k',
+    '$5k a $10k',
+    '$10k a $30k',
+    '$30k a $50k',
+    ...REVENUE_OPTIONS.filter((opt) => opt.startsWith('+')),
+    '+50k',
+    'Sin dato',
+  ]
+  const order = new Map()
+  orderList.forEach((opt, index) => {
+    if (!order.has(opt)) order.set(opt, index)
+  })
+
   return [...entries].sort((a, b) => {
-    const aIndex = order.get(a[0]) ?? 999
-    const bIndex = order.get(b[0]) ?? 999
+    const aPlus = a[0].startsWith('+')
+    const bPlus = b[0].startsWith('+')
+    const aIndex = order.has(a[0])
+      ? order.get(a[0])
+      : (aPlus ? 900 : (a[0] === 'Sin dato' ? 950 : 700))
+    const bIndex = order.has(b[0])
+      ? order.get(b[0])
+      : (bPlus ? 900 : (b[0] === 'Sin dato' ? 950 : 700))
     if (aIndex !== bIndex) return aIndex - bIndex
     return b[1] - a[1]
   })
@@ -124,71 +153,93 @@ function AnalyticsCharts({
   maxSubObstacle,
   revenueData,
   maxRevenue,
+  calificadosCount,
+  noCalificadosCount,
 }) {
   return (
-    <section className={styles.chartsGrid}>
-      <div className={`${styles.chartCard} ${styles.chartCardDaily}`}>
-        <h2 className={styles.chartTitle}>Registros últimos 14 días</h2>
-        <div className={styles.barChart}>
-          {dailyData.map((day) => (
-            <div key={day.key} className={styles.barCol}>
-              <div className={styles.barTrack}>
-                <div
-                  className={styles.barFill}
-                  style={{
-                    height: day.count > 0
-                      ? `${Math.max((day.count / maxDaily) * 100, 2)}%`
-                      : '0',
-                    minHeight: day.count > 0 ? 2 : 0,
-                  }}
-                />
+    <>
+      <div className={styles.analyticsMetrics}>
+        <div className={styles.metricCard}>
+          <div className={styles.metricHead}>
+            <span className={styles.metricLabel}>Calificados</span>
+            <i className="ti ti-rosette-discount-check" />
+          </div>
+          <div className={styles.metricSplit}>
+            <span className={styles.metricSplitLucas}>Sí: {calificadosCount}</span>
+            <span className={styles.metricSplitSep}>|</span>
+            <span className={styles.metricSplitJero}>No: {noCalificadosCount}</span>
+          </div>
+        </div>
+      </div>
+      <section className={styles.chartsGrid}>
+        <div className={`${styles.chartCard} ${styles.chartCardDaily}`}>
+          <h2 className={styles.chartTitle}>Registros últimos 14 días</h2>
+          <div className={styles.barChart}>
+            {dailyData.map((day) => (
+              <div
+                key={day.key}
+                className={styles.barCol}
+                title={`${day.count} registro${day.count === 1 ? '' : 's'} el ${day.label}`}
+              >
+                <div className={styles.barTrack}>
+                  <div
+                    className={styles.barFill}
+                    style={{
+                      height: day.count > 0
+                        ? `${Math.max((day.count / maxDaily) * 100, 2)}%`
+                        : '0',
+                      minHeight: day.count > 0 ? 2 : 0,
+                    }}
+                  />
+                </div>
+                <span className={styles.barCount}>{day.count}</span>
+                <span className={styles.barLabel}>{day.label}</span>
               </div>
-              <span className={styles.barLabel}>{day.label}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-      <div className={styles.chartCard}>
-        <h2 className={styles.chartTitle}>Por situación</h2>
-        <div className={styles.hBarList}>
-          {avatarData.length === 0 ? (
-            <p className={styles.cellMuted}>Sin datos todavía</p>
-          ) : avatarData.map(([label, value]) => (
-            <HorizontalBar key={label} label={label} value={value} max={maxAvatar} />
-          ))}
+        <div className={styles.chartCard}>
+          <h2 className={styles.chartTitle}>Por situación</h2>
+          <div className={styles.hBarList}>
+            {avatarData.length === 0 ? (
+              <p className={styles.cellMuted}>Sin datos todavía</p>
+            ) : avatarData.map(([label, value]) => (
+              <HorizontalBar key={label} label={label} value={value} max={maxAvatar} />
+            ))}
+          </div>
         </div>
-      </div>
-      <div className={styles.chartCard}>
-        <h2 className={styles.chartTitle}>Por cuello de botella</h2>
-        <div className={styles.hBarList}>
-          {bottleneckAreaData.length === 0 ? (
-            <p className={styles.cellMuted}>Sin datos todavía</p>
-          ) : bottleneckAreaData.map(([label, value]) => (
-            <HorizontalBar key={label} label={label} value={value} max={maxBottleneckArea} />
-          ))}
+        <div className={styles.chartCard}>
+          <h2 className={styles.chartTitle}>Por cuello de botella</h2>
+          <div className={styles.hBarList}>
+            {bottleneckAreaData.length === 0 ? (
+              <p className={styles.cellMuted}>Sin datos todavía</p>
+            ) : bottleneckAreaData.map(([label, value]) => (
+              <HorizontalBar key={label} label={label} value={value} max={maxBottleneckArea} />
+            ))}
+          </div>
         </div>
-      </div>
-      <div className={styles.chartCard}>
-        <h2 className={styles.chartTitle}>Top obstáculos</h2>
-        <div className={styles.hBarList}>
-          {subObstacleData.length === 0 ? (
-            <p className={styles.cellMuted}>Sin datos todavía</p>
-          ) : subObstacleData.map(([label, value]) => (
-            <HorizontalBar key={label} label={label} value={value} max={maxSubObstacle} />
-          ))}
+        <div className={styles.chartCard}>
+          <h2 className={styles.chartTitle}>Top obstáculos</h2>
+          <div className={styles.hBarList}>
+            {subObstacleData.length === 0 ? (
+              <p className={styles.cellMuted}>Sin datos todavía</p>
+            ) : subObstacleData.map(([label, value]) => (
+              <HorizontalBar key={label} label={label} value={value} max={maxSubObstacle} />
+            ))}
+          </div>
         </div>
-      </div>
-      <div className={styles.chartCard}>
-        <h2 className={styles.chartTitle}>Por facturación</h2>
-        <div className={styles.hBarList}>
-          {revenueData.length === 0 ? (
-            <p className={styles.cellMuted}>Sin datos todavía</p>
-          ) : revenueData.map(([label, value]) => (
-            <HorizontalBar key={label} label={label} value={value} max={maxRevenue} />
-          ))}
+        <div className={styles.chartCard}>
+          <h2 className={styles.chartTitle}>Por facturación</h2>
+          <div className={styles.hBarList}>
+            {revenueData.length === 0 ? (
+              <p className={styles.cellMuted}>Sin datos todavía</p>
+            ) : revenueData.map(([label, value]) => (
+              <HorizontalBar key={label} label={label} value={value} max={maxRevenue} />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }
 
@@ -259,6 +310,7 @@ export default function DashboardPage() {
   const [responsableFilter, setResponsableFilter] = useState('')
   const [revenueFilter, setRevenueFilter] = useState('')
   const [avatarFilter, setAvatarFilter] = useState('')
+  const [dateFilter, setDateFilter] = useState('')
   const [selectedId, setSelectedId] = useState(null)
   const [noteDraft, setNoteDraft] = useState('')
   const [regenConfirming, setRegenConfirming] = useState(false)
@@ -310,7 +362,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [search, areaFilter, statusFilter, responsableFilter, revenueFilter, avatarFilter])
+  }, [search, areaFilter, statusFilter, responsableFilter, revenueFilter, avatarFilter, dateFilter])
 
   const filteredLeads = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -319,6 +371,7 @@ export default function DashboardPage() {
       if (responsableFilter && lead.responsable !== responsableFilter) return false
       if (revenueFilter && lead.revenue !== revenueFilter) return false
       if (avatarFilter && lead.avatar !== avatarFilter) return false
+      if (dateFilter && formatDateInputValue(lead.created_at) !== dateFilter) return false
       if (statusFilter === 'pending' && lead.contacted) return false
       if (statusFilter === 'contacted' && !lead.contacted) return false
       if (statusFilter === 'complete' && !isLeadComplete(lead)) return false
@@ -334,7 +387,7 @@ export default function DashboardPage() {
         || (lead.access_code || '').toLowerCase().includes(q)
       )
     })
-  }, [leads, search, areaFilter, statusFilter, responsableFilter, revenueFilter, avatarFilter])
+  }, [leads, search, areaFilter, statusFilter, responsableFilter, revenueFilter, avatarFilter, dateFilter])
 
   const totalPages = Math.max(1, Math.ceil(filteredLeads.length / PAGE_SIZE))
 
@@ -604,17 +657,6 @@ export default function DashboardPage() {
               <span className={styles.metricSplitJero}>Jero: {metrics.jeroCount}</span>
             </div>
           </div>
-          <div className={styles.metricCard}>
-            <div className={styles.metricHead}>
-              <span className={styles.metricLabel}>Calificados</span>
-              <i className="ti ti-rosette-discount-check" />
-            </div>
-            <div className={styles.metricSplit}>
-              <span className={styles.metricSplitLucas}>Sí: {metrics.calificadosCount}</span>
-              <span className={styles.metricSplitSep}>|</span>
-              <span className={styles.metricSplitJero}>No: {metrics.noCalificadosCount}</span>
-            </div>
-          </div>
         </section>
 
         <section className={styles.toolbar}>
@@ -652,6 +694,24 @@ export default function DashboardPage() {
                 <option key={revenue} value={revenue}>{revenue}</option>
               ))}
             </select>
+            <label className={styles.dateFilter}>
+              <span className={styles.dateFilterLabel}>Día</span>
+              <input
+                type="date"
+                className={styles.select}
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+              />
+            </label>
+            {dateFilter && (
+              <button
+                type="button"
+                className={styles.btnClearDate}
+                onClick={() => setDateFilter('')}
+              >
+                Limpiar día
+              </button>
+            )}
             <select className={styles.select} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               <option value="all">Todos</option>
               <option value="pending">Pendientes</option>
@@ -830,6 +890,8 @@ export default function DashboardPage() {
                 maxSubObstacle={maxSubObstacle}
                 revenueData={revenueData}
                 maxRevenue={maxRevenue}
+                calificadosCount={metrics.calificadosCount}
+                noCalificadosCount={metrics.noCalificadosCount}
               />
             </div>
           </div>
