@@ -418,17 +418,30 @@ export default function DashboardPage() {
   }, [metricsData, leads])
 
   const revenueFilterOptions = useMemo(() => {
-    const extras = leads
-      .map((l) => l.revenue)
-      .filter((value) => value && !REVENUE_OPTIONS.includes(value))
-    return [...REVENUE_OPTIONS, ...[...new Set(extras)]]
+    const present = [...new Set(leads.map((l) => l.revenue).filter(Boolean))]
+    return sortRevenueEntries(present.map((label) => [label, 0])).map(([label]) => label)
   }, [leads])
 
   const avatarFilterOptions = useMemo(() => {
-    const extras = leads
-      .map((l) => l.avatar)
-      .filter((value) => value && !AVATAR_OPTIONS.includes(value))
-    return [...AVATAR_OPTIONS, ...[...new Set(extras)]]
+    const present = [...new Set(leads.map((l) => l.avatar).filter(Boolean))]
+    const order = new Map(AVATAR_OPTIONS.map((opt, index) => [opt, index]))
+    return present.sort((a, b) => {
+      const aIndex = order.get(a) ?? 999
+      const bIndex = order.get(b) ?? 999
+      if (aIndex !== bIndex) return aIndex - bIndex
+      return a.localeCompare(b, 'es')
+    })
+  }, [leads])
+
+  const areaFilterOptions = useMemo(() => {
+    const present = new Set()
+    leads.forEach((lead) => {
+      (lead.bottleneck_areas || []).forEach((area) => {
+        if (area) present.add(area)
+      })
+    })
+    return BOTTLENECK_AREA_OPTIONS.filter((area) => present.has(area))
+      .concat([...present].filter((area) => !BOTTLENECK_AREA_OPTIONS.includes(area)).sort())
   }, [leads])
 
   const dailyData = useMemo(() => (
@@ -666,7 +679,7 @@ export default function DashboardPage() {
             </label>
             <select className={styles.select} value={areaFilter} onChange={(e) => setAreaFilter(e.target.value)}>
               <option value="">Todas las áreas</option>
-              {BOTTLENECK_AREA_OPTIONS.map((area) => (
+              {areaFilterOptions.map((area) => (
                 <option key={area} value={area}>{area}</option>
               ))}
             </select>
