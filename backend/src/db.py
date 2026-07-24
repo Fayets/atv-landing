@@ -16,6 +16,7 @@ MIGRATION_COLUMNS = {
     "ig": "TEXT",
     "responsable": "TEXT",
     "calificado": "BOOLEAN",
+    "access_count": "INTEGER DEFAULT 0",
 }
 
 

@@ -40,6 +40,7 @@ class LeadOut(BaseModel):
     phone: str
     ig: Optional[str] = None
     access_code: str
+    access_count: Optional[int] = 0
     avatar: Optional[str] = None
     bottleneck_areas: Optional[List[str]] = None
     bottleneck_marketing: Optional[List[str]] = None

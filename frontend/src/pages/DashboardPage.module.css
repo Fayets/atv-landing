@@ -113,6 +113,12 @@
   color: #c0000a;
 }
 
+.metricSub {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b6560;
+}
+
 .metricSplit {
   display: flex;
   align-items: baseline;

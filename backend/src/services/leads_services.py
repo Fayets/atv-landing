@@ -77,7 +77,10 @@ class LeadsServices:
     def verify_code(self, code: str) -> dict | None:
         with db_session:
             lead = Lead.get(access_code=code)
-            return self._to_dict(lead) if lead else None
+            if not lead:
+                return None
+            lead.access_count = (lead.access_count or 0) + 1
+            return self._to_dict(lead)
 
     def update_lead(self, lead_id: int, data: LeadUpdate) -> dict | None:
         with db_session:
@@ -120,6 +123,27 @@ class LeadsServices:
                 return None
             lead.access_code = nuevo_codigo
             return self._to_dict(lead)
+
+    def reset_all_access_codes(self) -> dict:
+        with db_session:
+            lead_ids = [lead.id for lead in list(Lead.select())]
+
+        with db_session:
+            for lead_id in lead_ids:
+                lead = Lead.get(id=lead_id)
+                lead.access_code = f"TMP-{lead_id}-{random.randint(100000, 999999)}"
+
+        with db_session:
+            leads = list(Lead.select())
+            used_codes: set[str] = set()
+            for lead in leads:
+                code = self._generate_code()
+                while code in used_codes:
+                    code = self._generate_code()
+                used_codes.add(code)
+                lead.access_code = code
+
+            return {"ok": True, "total": len(leads), "updated": len(leads)}
 
     def delete_lead(self, lead_id: int) -> bool:
         with db_session:
@@ -200,10 +224,16 @@ class LeadsServices:
                 if day_key in daily:
                     daily[day_key] += 1
 
+            access_counts = [(lead.access_count or 0) for lead in all_leads]
+            total_accesses = sum(access_counts)
+            avg_access_count = round(total_accesses / total, 2) if total > 0 else 0.0
+
             return {
                 "total": total,
                 "contacted": contacted,
                 "pending": total - contacted,
+                "avg_access_count": avg_access_count,
+                "total_accesses": total_accesses,
                 "by_avatar": by_avatar,
                 "by_bottleneck_area": by_bottleneck_area,
                 "by_sub_obstacle": by_sub_obstacle,
@@ -228,6 +258,7 @@ class LeadsServices:
             "phone": lead.phone,
             "ig": lead.ig,
             "access_code": lead.access_code,
+            "access_count": lead.access_count or 0,
             "avatar": lead.avatar,
             "bottleneck_areas": self._deserialize_list(lead.bottleneck_areas),
             "bottleneck_marketing": self._deserialize_list(lead.bottleneck_marketing),

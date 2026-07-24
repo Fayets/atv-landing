@@ -11,6 +11,7 @@ class Lead(db.Entity):
     phone        = Required(str)
     ig           = Optional(str)
     access_code  = Required(str, unique=True)
+    access_count = Required(int, default=0)
 
     avatar               = Optional(str)
     bottleneck_areas     = Optional(str)

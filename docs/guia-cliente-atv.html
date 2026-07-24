@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Guía ATV — Landing, Dashboard y Meta</title>
+  <style>
+    @page { margin: 2cm 2.2cm; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #1a1a2e;
+      line-height: 1.55;
+      font-size: 11pt;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0;
+    }
+    .cover {
+      text-align: center;
+      padding: 80px 20px 60px;
+      page-break-after: always;
+      border-bottom: 4px solid #2563eb;
+    }
+    .cover h1 {
+      font-size: 28pt;
+      margin: 0 0 12px;
+      color: #0f172a;
+    }
+    .cover .subtitle {
+      font-size: 14pt;
+      color: #475569;
+      margin-bottom: 40px;
+    }
+    .cover .meta {
+      font-size: 10pt;
+      color: #64748b;
+    }
+    h2 {
+      color: #1e40af;
+      font-size: 16pt;
+      margin-top: 32px;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #dbeafe;
+      page-break-after: avoid;
+    }
+    h3 {
+      color: #334155;
+      font-size: 12pt;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      page-break-after: avoid;
+    }
+    p { margin: 0 0 10px; }
+    ul, ol { margin: 0 0 12px; padding-left: 22px; }
+    li { margin-bottom: 5px; }
+    .box {
+      background: #f8fafc;
+      border-left: 4px solid #2563eb;
+      padding: 12px 16px;
+      margin: 14px 0;
+      border-radius: 0 6px 6px 0;
+    }
+    .box.green { border-color: #16a34a; background: #f0fdf4; }
+    .box.amber { border-color: #d97706; background: #fffbeb; }
+    .flow {
+      background: #f1f5f9;
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-family: ui-monospace, monospace;
+      font-size: 10pt;
+      line-height: 1.8;
+      margin: 14px 0;
+      white-space: pre-line;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 16px;
+      font-size: 10pt;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: left;
+    }
+    th { background: #e2e8f0; font-weight: 600; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .page-break { page-break-before: always; }
+    .footer-note {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 9pt;
+      color: #64748b;
+      text-align: center;
+    }
+    .step-num {
+      display: inline-block;
+      background: #2563eb;
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 22px;
+      font-size: 9pt;
+      font-weight: bold;
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cover">
+    <h1>Sistema de Captación ATV</h1>
+    <p class="subtitle">Guía para entender y replicar el flujo completo:<br>landing, dashboard, calificación y Meta Ads</p>
+    <p class="meta">ATV — Aumenta Tu Valor<br>Julio 2026</p>
+  </div>
+
+  <h2>1. ¿Qué es este sistema?</h2>
+  <p>Es un embudo de captación de leads para el acceso al curso/webinar de ATV. La persona entra por una landing, completa un formulario y un quiz corto, y el sistema decide automáticamente si es un lead <strong>calificado</strong> o no.</p>
+  <p>Los leads quedan guardados en un <strong>dashboard interno</strong> donde el equipo comercial (setters) puede verlos, filtrarlos, contactarlos por WhatsApp y hacer seguimiento.</p>
+  <p>Además, los leads calificados se reportan a <strong>Meta (Facebook/Instagram)</strong> para optimizar las campañas publicitarias.</p>
+
+  <div class="box">
+    <strong>URL actual del sistema:</strong> https://atvos.io/acceso<br>
+    <strong>Dashboard:</strong> acceso con usuario y contraseña (solo equipo interno)
+  </div>
+
+  <h2>2. Flujo del visitante (landing + quiz)</h2>
+  <p>Cuando alguien entra a la landing, recorre estos pasos en orden:</p>
+
+  <p><span class="step-num">1</span> <strong>Datos de contacto</strong> — Nombre, email, teléfono e Instagram (todos obligatorios).</p>
+  <p><span class="step-num">2</span> <strong>Perfil / situación actual</strong> — Elige entre 17 opciones (ej: coaching, creador con infoproducto, dueño de agencia, etc.).</p>
+  <p><span class="step-num">3</span> <strong>Cuello de botella</strong> — Elige una o más áreas: Marketing, Ventas o Producto. Luego marca los problemas específicos de cada área.</p>
+  <p><span class="step-num">4</span> <strong>Facturación mensual</strong> — Elige su rango de ingresos (desde $0 a +$50k).</p>
+  <p><span class="step-num">5</span> <strong>Resultado</strong> — Ve un diagnóstico personalizado y accede a la página de agradecimiento.</p>
+
+  <div class="box amber">
+    <strong>Importante:</strong> El lead <em>no se guarda</em> al completar solo el paso 1. Se guarda recién cuando termina todo el quiz. Esto evita tener registros incompletos en la base de datos.
+  </div>
+
+  <h3>¿Qué pasa al finalizar?</h3>
+  <ul>
+    <li>El sistema calcula si el lead es <strong>calificado</strong> o <strong>no calificado</strong>.</li>
+    <li>Se asigna automáticamente a un setter (Lucas o Jero, de forma alternada).</li>
+    <li>Si es calificado, se envía el evento <strong>Lead</strong> a Meta (Pixel + servidor).</li>
+    <li>El visitante ve la página de gracias con opción de contacto por WhatsApp.</li>
+  </ul>
+
+  <h2 class="page-break">3. ¿Cómo se califica un lead?</h2>
+  <p>Un lead es <strong>calificado</strong> cuando cumple <strong>las dos condiciones al mismo tiempo</strong>:</p>
+
+  <h3>Condición 1 — Perfil (avatar) adecuado</h3>
+  <p>Debe ser uno de estos 9 perfiles:</p>
+  <ul>
+    <li>Coaching / Mentoría / Consultoría</li>
+    <li>Creador con infoproducto</li>
+    <li>Experto en infoproductos / Growth Operator</li>
+    <li>Dueño de negocio con infoproducto</li>
+    <li>Dueño de agencia</li>
+    <li>Profesional independiente</li>
+    <li>CCO (director)</li>
+    <li>Infoproducto de ecommerce</li>
+    <li>Agente inmobiliarios / Real State con infoproducto</li>
+  </ul>
+
+  <h3>Condición 2 — Facturación mínima</h3>
+  <p>Debe facturar al menos <strong>$5.000 USD por mes</strong>. Los rangos que califican son:</p>
+  <ul>
+    <li>$5k a 10k</li>
+    <li>$10k a 30k</li>
+    <li>$30k a 50k</li>
+    <li>+$50k</li>
+  </ul>
+
+  <div class="box green">
+    <strong>Ejemplo:</strong> Una persona que es "Dueño de agencia" y factura "$10k a 30k" → <strong>Calificado ✓</strong><br>
+    Una persona que es "Creador de contenido sin infoproducto" aunque facture +$50k → <strong>No calificado ✗</strong><br>
+    Una persona "Coaching" que factura "$3k a 5k" → <strong>No calificado ✗</strong>
+  </div>
+
+  <h2>4. Dashboard — Panel de control del equipo</h2>
+  <p>El dashboard es la herramienta interna donde el equipo ve y gestiona todos los leads registrados.</p>
+
+  <h3>Información principal (KPIs)</h3>
+  <table>
+    <tr><th>Indicador</th><th>Qué muestra</th></tr>
+    <tr><td>Total de registros</td><td>Cantidad total de leads en la base</td></tr>
+    <tr><td>Registros últimos 14 días</td><td>Leads nuevos por día (gráfico de barras)</td></tr>
+    <tr><td>Calificados Sí / No</td><td>Cuántos leads cumplen o no los criterios</td></tr>
+    <tr><td>Asignación setters</td><td>Cuántos leads tiene Lucas vs Jero</td></tr>
+    <tr><td>Completos / Solo datos</td><td>Completos = terminaron el quiz. Solo datos = registros viejos sin quiz</td></tr>
+  </table>
+
+  <h3>Tabla de leads</h3>
+  <p>Cada fila muestra: nombre, email, teléfono, Instagram, perfil, facturación, áreas de problema, responsable asignado, estado (calificado/no) y fecha.</p>
+  <p>Al hacer clic en un lead se abre un panel lateral con el detalle completo y opciones para:</p>
+  <ul>
+    <li>Reasignar responsable (Lucas o Jero)</li>
+    <li>Abrir WhatsApp con mensaje pre-armado</li>
+    <li>Ver todas las respuestas del quiz</li>
+  </ul>
+
+  <h3>Filtros disponibles</h3>
+  <ul>
+    <li>Búsqueda por nombre, email o teléfono</li>
+    <li>Responsable (Lucas / Jero)</li>
+    <li>Facturación</li>
+    <li>Perfil / situación</li>
+    <li>Área de problema (Marketing, Ventas, Producto)</li>
+    <li>Estado: Calificados, No calificados, Completos, Solo datos</li>
+    <li>Fecha específica</li>
+  </ul>
+
+  <h3>Ver análisis (modal)</h3>
+  <p>Botón en la barra superior que abre gráficos detallados: distribución por perfil, facturación, áreas de problema, evolución diaria y más.</p>
+
+  <h3>Exportar</h3>
+  <p>Se puede descargar un archivo CSV con todos los leads filtrados para usar en Excel o Google Sheets.</p>
+
+  <h2 class="page-break">5. Asignación automática a setters</h2>
+  <p>Cada lead nuevo se asigna automáticamente de forma alternada:</p>
+  <ul>
+    <li>Lead #1, #3, #5… → <strong>Lucas</strong></li>
+    <li>Lead #2, #4, #6… → <strong>Jero</strong></li>
+  </ul>
+  <p>Desde el dashboard se puede cambiar manualmente el responsable si hace falta reasignar.</p>
+
+  <h2>6. Mensajes de WhatsApp para setters</h2>
+  <p>El dashboard genera automáticamente un mensaje de WhatsApp según el tipo de lead:</p>
+
+  <h3>Lead completo (terminó el quiz)</h3>
+  <p>Mensaje personalizado de "Juan" con el link del curso y una referencia al problema que marcó en el formulario. Invita a que le cuente más por audio.</p>
+
+  <h3>Lead solo datos (registro incompleto — casos viejos)</h3>
+  <p>Mensaje de seguimiento preguntando si dejó el formulario a medias y ofreciendo ayuda para completarlo.</p>
+
+  <div class="box">
+    <strong>Link del curso usado en los mensajes:</strong> https://atvos.io/course
+  </div>
+
+  <h2>7. Conexión con Meta (Facebook / Instagram Ads)</h2>
+  <p>El sistema está conectado con Meta de dos formas complementarias. Esto permite que las campañas de ads optimicen hacia leads de calidad, no hacia cualquier registro.</p>
+
+  <h3>7.1 Meta Pixel (en el navegador)</h3>
+  <p>Es un código pequeño instalado en la landing que "ve" lo que hace el visitante:</p>
+  <ul>
+    <li><strong>PageView</strong> — Se dispara cuando alguien entra a la página (todos los visitantes).</li>
+    <li><strong>Lead</strong> — Se dispara <em>solo</em> cuando el lead es calificado y termina el quiz.</li>
+  </ul>
+  <p><strong>Pixel ID actual:</strong> 1502839491117808</p>
+
+  <h3>7.2 CAPI — Conversions API (desde el servidor)</h3>
+  <p>Cuando un lead es <strong>calificado</strong>, el servidor también envía el evento Lead directamente a Meta (además del Pixel). Esto es más confiable porque no depende de que el navegador del usuario bloquee cookies o trackers.</p>
+  <p>Pixel y CAPI usan el mismo <strong>event_id</strong> para que Meta no cuente el lead dos veces (deduplicación).</p>
+
+  <div class="box green">
+    <strong>Resumen claro:</strong><br>
+    ✓ Lead <strong>calificado</strong> → <strong>SÍ se envía</strong> el evento Lead a Meta (Pixel + CAPI)<br>
+    ✗ Lead <strong>no calificado</strong> → <strong>NO se envía</strong> el evento Lead a Meta<br><br>
+    Así Meta aprende a traer personas con el perfil y facturación que buscás, no cualquier registro.
+  </div>
+
+  <h3>7.3 Cómo configurar Meta desde cero (paso a paso)</h3>
+  <ol>
+    <li><strong>Crear un Pixel</strong> en Meta Business Suite → Administrador de eventos → Conectar datos → Web → Meta Pixel. Copiá el Pixel ID.</li>
+    <li><strong>Instalar el Pixel</strong> en el código HTML de la landing (código base de Meta + init con tu Pixel ID).</li>
+    <li><strong>Generar un Access Token</strong> para CAPI: Administrador de eventos → tu Pixel → Configuración → Conversions API → Generar token de acceso.</li>
+    <li><strong>Guardar el token</strong> como variable de entorno secreta en el servidor (<code>META_CAPI_TOKEN</code>). Nunca va en el frontend.</li>
+    <li><strong>Configurar el evento Lead</strong> en la campaña de Meta Ads como conversión optimizada.</li>
+    <li><strong>Verificar</strong> en Administrador de eventos que lleguen PageView y Lead (usar la extensión "Meta Pixel Helper" en Chrome).</li>
+  </ol>
+
+  <h3>7.4 Cuándo se envía (y cuándo no) el evento Lead</h3>
+  <table>
+    <tr><th>Situación</th><th>¿Se envía Lead a Meta?</th></tr>
+    <tr><td>Lead calificado que terminó el quiz</td><td><strong>Sí ✓</strong> — Pixel + CAPI</td></tr>
+    <tr><td>Lead no calificado que terminó el quiz</td><td><strong>No ✗</strong></td></tr>
+    <tr><td>Solo completó el formulario (paso 1) y abandonó</td><td><strong>No ✗</strong> — ni siquiera se guarda en la base</td></tr>
+    <tr><td>Cualquier visitante que entra a la landing</td><td>Solo <strong>PageView</strong> (no Lead)</td></tr>
+  </table>
+  <p>No se usan otros eventos intermedios (como SubmitApplication). El único evento de conversión que importa es <strong>Lead</strong>, y solo para calificados.</p>
+
+  <h2 class="page-break">8. Diagrama del flujo completo</h2>
+  <div class="flow">Visitante entra a la landing (atvos.io/acceso)
+        ↓
+   Meta Pixel registra "PageView"
+        ↓
+   Completa formulario + quiz (4 pasos)
+        ↓
+   ¿Es calificado? (perfil + facturación)
+        ↓                         ↓
+       SÍ                        NO
+        ↓                         ↓
+  ✓ Se envía evento Lead    ✗ No se envía Lead
+  a Meta (Pixel + CAPI)     (solo queda en dashboard)
+        ↓                         ↓
+  Asignación Lucas/Jero ←─────────┘
+        ↓
+  Aparece en el Dashboard
+        ↓
+  Setter contacta por WhatsApp</div>
+
+  <h2>9. Qué necesitás para replicar este sistema</h2>
+  <table>
+    <tr><th>Componente</th><th>Para qué sirve</th></tr>
+    <tr><td>Landing con quiz</td><td>Captar datos y calificar al visitante</td></tr>
+    <tr><td>Base de datos</td><td>Guardar todos los leads con sus respuestas</td></tr>
+    <tr><td>Backend (API)</td><td>Procesar registros, calificación, CAPI y asignación</td></tr>
+    <tr><td>Dashboard web</td><td>Panel interno para el equipo comercial</td></tr>
+    <tr><td>Meta Pixel</td><td>Tracking en el navegador del visitante</td></tr>
+    <tr><td>Meta CAPI + Token</td><td>Tracking desde el servidor (más confiable)</td></tr>
+    <tr><td>Cuenta Meta Ads</td><td>Correr campañas optimizadas al evento Lead</td></tr>
+    <tr><td>WhatsApp Business</td><td>Contacto directo con los leads desde el dashboard</td></tr>
+  </table>
+
+  <h3>Variables de configuración clave</h3>
+  <table>
+    <tr><th>Variable</th><th>Valor / descripción</th></tr>
+    <tr><td>URL landing</td><td>https://atvos.io/acceso</td></tr>
+    <tr><td>URL curso</td><td>https://atvos.io/course</td></tr>
+    <tr><td>Meta Pixel ID</td><td>1502839491117808</td></tr>
+    <tr><td>Token CAPI</td><td>Configurado en el servidor (secreto)</td></tr>
+    <tr><td>Setters</td><td>Lucas y Jero (asignación alternada)</td></tr>
+  </table>
+
+  <h2>10. Preguntas frecuentes</h2>
+
+  <h3>¿Por qué solo reportamos leads calificados a Meta?</h3>
+  <p>Porque si Meta recibe todos los registros (incluidos los de baja calidad), el algoritmo aprende a traer más personas así. Al enviar solo calificados, las campañas mejoran hacia tu cliente ideal.</p>
+
+  <h3>¿Puedo cambiar los criterios de calificación?</h3>
+  <p>Sí. Los perfiles y rangos de facturación que califican están definidos en una lista. Se pueden agregar o quitar perfiles, o subir/bajar el mínimo de facturación. Después hay que recalcular los leads existentes.</p>
+
+  <h3>¿Qué pasa si alguien abandona a mitad del quiz?</h3>
+  <p>No queda registrado. Solo se guardan leads que completan todo el flujo.</p>
+
+  <h3>¿Cómo sé si Meta está recibiendo los eventos?</h3>
+  <p>Entrá a Meta Business Suite → Administrador de eventos → tu Pixel. Ahí ves en tiempo real los PageView y Lead. También podés usar la extensión "Meta Pixel Helper" en Chrome mientras probás la landing.</p>
+
+  <h3>¿Puedo agregar más setters?</h3>
+  <p>Sí. Hoy hay dos (Lucas y Jero) con round-robin. Se puede ampliar la lógica para incluir más personas.</p>
+
+  <div class="footer-note">
+    Documento generado para ATV — Aumenta Tu Valor · Julio 2026<br>
+    Para consultas técnicas o cambios en el sistema, contactar al equipo de desarrollo.
+  </div>
+
+</body>
+</html>

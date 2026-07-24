@@ -37,6 +37,11 @@ def recalculate_calificacion():
     return svc.recalculate_all_calificado()
 
 
+@router.post("/reset-all-codigos")
+def reset_all_codigos():
+    return svc.reset_all_access_codes()
+
+
 @router.get("/verify/{code}")
 def verify_code(code: str):
     lead = svc.verify_code(code)

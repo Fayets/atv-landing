@@ -78,7 +78,7 @@ function exportEmails(leads) {
 
 function exportCsv(leads) {
   const headers = [
-    'id', 'name', 'email', 'phone', 'ig', 'access_code', 'avatar',
+    'id', 'name', 'email', 'phone', 'ig', 'access_code', 'access_count', 'avatar',
     'bottleneck_areas', 'bottleneck_marketing', 'bottleneck_ventas',
     'bottleneck_producto', 'bottleneck_sistemas', 'revenue',
     'created_at', 'contacted', 'notes',
@@ -405,6 +405,8 @@ export default function DashboardPage() {
     const jeroCount = leads.filter((l) => l.responsable === 'Jero').length
     const calificadosCount = leads.filter((l) => l.calificado === true).length
     const noCalificadosCount = leads.filter((l) => l.calificado === false).length
+    const avgAccessCount = metricsData?.avg_access_count ?? 0
+    const totalAccesses = metricsData?.total_accesses ?? 0
     return {
       total,
       pending,
@@ -414,6 +416,8 @@ export default function DashboardPage() {
       jeroCount,
       calificadosCount,
       noCalificadosCount,
+      avgAccessCount,
+      totalAccesses,
     }
   }, [metricsData, leads])
 
@@ -654,6 +658,16 @@ export default function DashboardPage() {
           </div>
           <div className={styles.metricCard}>
             <div className={styles.metricHead}>
+              <span className={styles.metricLabel}>Promedio de accesos</span>
+              <i className="ti ti-login" />
+            </div>
+            <div className={styles.metricNum}>{metrics.avgAccessCount}</div>
+            <div className={styles.metricSub}>
+              {metrics.totalAccesses} ingreso{metrics.totalAccesses === 1 ? '' : 's'} en total
+            </div>
+          </div>
+          <div className={styles.metricCard}>
+            <div className={styles.metricHead}>
               <span className={styles.metricLabel}>Asignación setters</span>
               <i className="ti ti-users-group" />
             </div>
@@ -751,6 +765,7 @@ export default function DashboardPage() {
                   <th>WhatsApp</th>
                   <th>IG</th>
                   <th>Clave</th>
+                  <th>Accesos</th>
                   <th>Responsable</th>
                   <th>Situación</th>
                   <th>Áreas</th>
@@ -763,7 +778,7 @@ export default function DashboardPage() {
               <tbody>
                 {filteredLeads.length === 0 ? (
                   <tr>
-                    <td colSpan={12} className={styles.cellMuted}>Sin registrados todavía</td>
+                    <td colSpan={13} className={styles.cellMuted}>Sin registrados todavía</td>
                   </tr>
                 ) : (
                   paginatedLeads.map((lead) => (
@@ -800,6 +815,7 @@ export default function DashboardPage() {
                       <td>
                         <span className={styles.accessCode}>{lead.access_code}</span>
                       </td>
+                      <td className={styles.cellMuted}>{lead.access_count ?? 0}</td>
                       <td>
                         <ResponsableBadge responsable={lead.responsable} />
                       </td>
@@ -945,6 +961,9 @@ export default function DashboardPage() {
               <h3 className={styles.panelSectionTitle}>Clave de acceso</h3>
               <div className={styles.panelCodeBlock}>
                 <div className={styles.panelAccessCode}>{selectedLead.access_code}</div>
+                <p className={styles.panelMeta}>
+                  Accesos con clave: {selectedLead.access_count ?? 0}
+                </p>
                 <div className={styles.codeActions}>
                   <button type="button" className={styles.btnCopyCode} onClick={handleCopyCode}>
                     {codeCopied ? '✓ COPIADO' : 'COPIAR'}
