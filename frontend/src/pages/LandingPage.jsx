@@ -129,6 +129,7 @@ export default function LandingPage({ onComplete }) {
 
         if (esCalificado(payload)) {
           const leadEventId = `lead_${res.id}_${Date.now()}`
+          const registroEventId = `registroCompletado_${res.id}_${Date.now()}`
 
           if (typeof window.fbq !== 'undefined') {
             window.fbq('track', 'Lead', {
@@ -136,11 +137,24 @@ export default function LandingPage({ onComplete }) {
             }, {
               eventID: leadEventId,
             })
+
+            window.fbq('trackCustom', 'registroCompletado', {
+              content_name: 'webinar_calificado',
+            }, {
+              eventID: registroEventId,
+            })
           }
 
           await sendCapiEvent(res.id, {
             event_name: 'Lead',
             event_id: leadEventId,
+            email: form.email,
+            phone: form.phone,
+          })
+
+          await sendCapiEvent(res.id, {
+            event_name: 'registroCompletado',
+            event_id: registroEventId,
             email: form.email,
             phone: form.phone,
           })
