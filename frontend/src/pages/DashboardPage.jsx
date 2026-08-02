@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { fetchLeads as getLeads, updateLead, deleteLead } from '../api/leads'
 import { AVATAR_OPTIONS, REVENUE_OPTIONS } from '../data/landingQuiz'
 import { buildSetterWhatsappUrl } from '../utils/buildSetterWhatsappUrl'
+import { downloadLeadsPdf, downloadLeadsTxt } from '../utils/exportLeadsReport'
 import '../styles/atv-dashboard.css'
 import styles from './DashboardPage.module.css'
 
@@ -62,38 +63,6 @@ function formatDateFull(iso) {
 function igToUrl(ig) {
   const handle = (ig || '').trim().replace(/^@/, '')
   return handle ? `https://instagram.com/${handle}` : null
-}
-
-function downloadFile(filename, content, mime) {
-  const blob = new Blob([content], { type: mime })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
-function exportEmails(leads) {
-  const emails = leads.map((l) => l.email).join('\n')
-  downloadFile('atv-leads-emails.txt', emails, 'text/plain;charset=utf-8')
-}
-
-function exportCsv(leads) {
-  const headers = [
-    'id', 'name', 'email', 'phone', 'ig', 'access_code', 'access_count', 'avatar',
-    'bottleneck_areas', 'bottleneck_marketing', 'bottleneck_ventas',
-    'bottleneck_producto', 'bottleneck_sistemas', 'revenue',
-    'created_at', 'contacted', 'notes',
-  ]
-  const formatField = (lead, key) => {
-    const value = lead[key]
-    if (Array.isArray(value)) return value.join(' | ')
-    return value
-  }
-  const escape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`
-  const rows = leads.map((l) => headers.map((h) => escape(formatField(l, h))).join(','))
-  downloadFile('atv-leads.csv', [headers.join(','), ...rows].join('\n'), 'text/csv;charset=utf-8')
 }
 
 function objectToSortedEntries(obj) {
@@ -319,6 +288,8 @@ export default function DashboardPage() {
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [deleteError, setDeleteError] = useState(null)
   const [showAnalytics, setShowAnalytics] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportLoading, setExportLoading] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
@@ -345,13 +316,17 @@ export default function DashboardPage() {
   }, [])
 
   useEffect(() => {
-    if (!showAnalytics) return undefined
+    if (!showAnalytics && !showExportModal) return undefined
     const onKeyDown = (e) => {
-      if (e.key === 'Escape') setShowAnalytics(false)
+      if (e.key === 'Escape') {
+        if (exportLoading) return
+        setShowAnalytics(false)
+        setShowExportModal(false)
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [showAnalytics])
+  }, [showAnalytics, showExportModal, exportLoading])
 
   useEffect(() => {
     setCurrentPage(1)
@@ -381,6 +356,32 @@ export default function DashboardPage() {
       )
     })
   }, [leads, search, areaFilter, statusFilter, responsableFilter, revenueFilter, avatarFilter, dateFilter])
+
+  const exportFilters = useMemo(() => ({
+    search,
+    areaFilter,
+    statusFilter,
+    responsableFilter,
+    revenueFilter,
+    avatarFilter,
+    dateFilter,
+  }), [search, areaFilter, statusFilter, responsableFilter, revenueFilter, avatarFilter, dateFilter])
+
+  async function handleExport(format) {
+    if (filteredLeads.length === 0 || exportLoading) return
+
+    setExportLoading(format)
+    try {
+      if (format === 'txt') {
+        downloadLeadsTxt(filteredLeads, exportFilters)
+      } else {
+        await downloadLeadsPdf(filteredLeads, exportFilters)
+      }
+      setShowExportModal(false)
+    } finally {
+      setExportLoading(null)
+    }
+  }
 
   const totalPages = Math.max(1, Math.ceil(filteredLeads.length / PAGE_SIZE))
 
@@ -761,13 +762,14 @@ export default function DashboardPage() {
           </div>
           <div className={styles.toolbarActions}>
             <span className={styles.leadCount}>{filteredLeads.length} registrados</span>
-            <button type="button" className={styles.btnExportEmails} onClick={() => exportEmails(filteredLeads)}>
-              <i className="ti ti-mail" />
-              Exportar emails
-            </button>
-            <button type="button" className={styles.btnExportCsv} onClick={() => exportCsv(filteredLeads)}>
+            <button
+              type="button"
+              className={styles.btnExport}
+              onClick={() => setShowExportModal(true)}
+              disabled={filteredLeads.length === 0}
+            >
               <i className="ti ti-download" />
-              CSV completo
+              Exportar
             </button>
           </div>
         </section>
@@ -932,6 +934,73 @@ export default function DashboardPage() {
                 calificadosCount={metrics.calificadosCount}
                 noCalificadosCount={metrics.noCalificadosCount}
               />
+            </div>
+          </div>
+        </>
+      )}
+
+      {showExportModal && (
+        <>
+          <button
+            type="button"
+            className={styles.overlay}
+            aria-label="Cerrar exportación"
+            onClick={() => !exportLoading && setShowExportModal(false)}
+          />
+          <div
+            className={styles.exportModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="export-title"
+          >
+            <header className={styles.exportHeader}>
+              <div>
+                <h2 id="export-title" className={styles.exportTitle}>Exportar registrados</h2>
+                <p className={styles.exportSubtitle}>
+                  {filteredLeads.length} registro{filteredLeads.length === 1 ? '' : 's'} según filtros actuales
+                </p>
+              </div>
+              <button
+                type="button"
+                className={styles.exportClose}
+                onClick={() => !exportLoading && setShowExportModal(false)}
+                aria-label="Cerrar"
+                disabled={Boolean(exportLoading)}
+              >
+                <i className="ti ti-x" />
+              </button>
+            </header>
+            <div className={styles.exportBody}>
+              <button
+                type="button"
+                className={styles.exportOption}
+                onClick={() => handleExport('pdf')}
+                disabled={Boolean(exportLoading)}
+              >
+                <span className={styles.exportOptionIcon}>
+                  <i className="ti ti-file-type-pdf" />
+                </span>
+                <span className={styles.exportOptionText}>
+                  <strong>PDF con estilo ATV</strong>
+                  <span>Reporte visual con resumen y detalle de cada registrado para analizar y sacar conclusiones.</span>
+                </span>
+                {exportLoading === 'pdf' && <span className={styles.exportOptionLoading}>Generando…</span>}
+              </button>
+              <button
+                type="button"
+                className={styles.exportOption}
+                onClick={() => handleExport('txt')}
+                disabled={Boolean(exportLoading)}
+              >
+                <span className={styles.exportOptionIcon}>
+                  <i className="ti ti-file-text" />
+                </span>
+                <span className={styles.exportOptionText}>
+                  <strong>TXT sin formato</strong>
+                  <span>Mismo contenido en texto plano, ideal para copiar, pegar o procesar con otras herramientas.</span>
+                </span>
+                {exportLoading === 'txt' && <span className={styles.exportOptionLoading}>Descargando…</span>}
+              </button>
             </div>
           </div>
         </>

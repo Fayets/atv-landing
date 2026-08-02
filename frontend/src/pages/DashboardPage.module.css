@@ -539,7 +539,7 @@
   color: var(--atv-subtle, #a1a1a1);
 }
 
-.btnExportEmails {
+.btnExport {
   composes: btn-primary from global;
   display: inline-flex;
   align-items: center;
@@ -549,14 +549,137 @@
   font-size: 0.8125rem;
 }
 
-.btnExportCsv {
+.btnExport:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.exportModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(480px, calc(100vw - 32px));
+  background: rgba(12, 8, 8, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 85;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  animation: atv-enter 0.35s ease both;
+}
+
+.exportHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--atv-border-soft, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.exportTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.exportSubtitle {
+  margin: 6px 0 0;
+  font-size: 0.8125rem;
+  color: var(--atv-subtle, #a1a1a1);
+}
+
+.exportClose {
   composes: btn-secondary from global;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 38px;
-  padding: 0 14px;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.exportBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+}
+
+.exportOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 14px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.exportOption:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.exportOption:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.exportOptionIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(230, 57, 70, 0.12);
+  color: #ff8888;
+  flex-shrink: 0;
+}
+
+.exportOptionIcon i {
+  font-size: 1.25rem;
+}
+
+.exportOptionText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.exportOptionText strong {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.exportOptionText span {
   font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--atv-subtle, #a1a1a1);
+}
+
+.exportOptionLoading {
+  margin-left: auto;
+  align-self: center;
+  font-size: 0.75rem;
+  color: var(--atv-subtle, #a1a1a1);
+  white-space: nowrap;
 }
 
 .tableCard {
