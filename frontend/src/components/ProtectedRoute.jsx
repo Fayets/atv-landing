@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { getSession } from '../api/auth'
-import styles from './ProtectedRoute.module.css'
+import '../styles/atv-dashboard.css'
+
+const LOGO_SRC = `${import.meta.env.BASE_URL}AumentaTuValorLogo.png`
 
 export default function ProtectedRoute({ children }) {
   const [status, setStatus] = useState('loading')
@@ -17,12 +19,16 @@ export default function ProtectedRoute({ children }) {
 
   if (status === 'loading') {
     return (
-      <div className={styles.screen}>
-        <div className={styles.logo}>
-          <span className={styles.logoA}>A</span>
-          <span className={styles.logoT}>T</span>
-          <span className={styles.logoV}>V</span>
-        </div>
+      <div className="atv-metrics-page atv-metrics-page--loading">
+        <div className="atv-page__glow atv-page__glow--metrics" aria-hidden="true" />
+        <img
+          src={LOGO_SRC}
+          alt="Aumenta Tu Valor"
+          className="atv-metrics-loading-logo"
+          width={112}
+          height={36}
+        />
+        <span className="atv-metrics-spinner" aria-hidden="true" />
       </div>
     )
   }

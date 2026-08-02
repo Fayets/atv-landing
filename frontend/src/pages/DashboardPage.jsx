@@ -2,9 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { fetchLeads as getLeads, updateLead, deleteLead } from '../api/leads'
 import { AVATAR_OPTIONS, REVENUE_OPTIONS } from '../data/landingQuiz'
 import { buildSetterWhatsappUrl } from '../utils/buildSetterWhatsappUrl'
+import '../styles/atv-dashboard.css'
 import styles from './DashboardPage.module.css'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+const LOGO_SRC = `${import.meta.env.BASE_URL}AumentaTuValorLogo.png`
+
+const API_BASE = import.meta.env.VITE_API_URL || '/acceso/api'
 const PAGE_SIZE = 20
 
 const BOTTLENECK_AREA_OPTIONS = ['Marketing', 'Ventas', 'Producto']
@@ -283,14 +286,16 @@ function ResponsableBadge({ responsable }) {
   return <span className={`${styles.statusPill} ${styles.responsableSinAsignar}`}>Sin asignar</span>
 }
 
-function getRowStyle(calificado) {
-  if (calificado === true) {
-    return { background: 'rgba(29, 158, 117, 0.08)', borderLeft: '3px solid #1d9e75' }
-  }
-  if (calificado === false) {
-    return { background: 'rgba(176, 69, 69, 0.08)', borderLeft: '3px solid var(--red)' }
-  }
-  return undefined
+function getRowClass(calificado) {
+  if (calificado === true) return styles.rowCalificado
+  if (calificado === false) return styles.rowNoCalificado
+  return ''
+}
+
+function getPanelClass(calificado) {
+  if (calificado === true) return styles.panelCalificado
+  if (calificado === false) return styles.panelNoCalificado
+  return ''
 }
 
 export default function DashboardPage() {
@@ -322,18 +327,13 @@ export default function DashboardPage() {
     async function loadDashboard() {
       setLoading(true)
       try {
-        const [leadsResult, metricsResult] = await Promise.all([
+        const [leadsResult, metricsResult] = await Promise.allSettled([
           getLeads(),
           getMetrics(),
         ])
         if (!cancelled) {
-          setLeads(leadsResult)
-          setMetricsData(metricsResult)
-        }
-      } catch {
-        if (!cancelled) {
-          setLeads([])
-          setMetricsData(null)
+          setLeads(leadsResult.status === 'fulfilled' ? leadsResult.value : [])
+          setMetricsData(metricsResult.status === 'fulfilled' ? metricsResult.value : null)
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -577,43 +577,35 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className={styles.page}>
-        <nav className={styles.navbar}>
-          <div className={styles.navLeft}>
-            <img
-              src={`${import.meta.env.BASE_URL}ATVLogin.png`}
-              alt="ATV — Aumenta Tu Valor"
-              className={styles.logo}
-              width={32}
-              height={32}
-            />
-          </div>
-          <button
-            type="button"
-            className={styles.btnAnalytics}
-            onClick={() => setShowAnalytics(true)}
-          >
-            <i className="ti ti-chart-bar" />
-            Ver análisis
-          </button>
-        </nav>
-        <main className={styles.content}>
-          <p className={styles.cellMuted}>Cargando...</p>
-        </main>
+      <div className="atv-metrics-page">
+        <div className="atv-page__glow atv-page__glow--metrics" aria-hidden="true" />
+        <div className={`${styles.page} atv-metrics-page--loading`}>
+          <img
+            src={LOGO_SRC}
+            alt="Aumenta Tu Valor"
+            className="atv-metrics-loading-logo"
+            width={112}
+            height={36}
+          />
+          <span className="atv-metrics-spinner" aria-hidden="true" />
+          <p className={styles.cellMuted}>Cargando métricas...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className={styles.page}>
+    <div className="atv-metrics-page">
+      <div className="atv-page__glow atv-page__glow--metrics" aria-hidden="true" />
+      <div className={styles.page}>
       <nav className={styles.navbar}>
         <div className={styles.navLeft}>
           <img
-            src={`${import.meta.env.BASE_URL}ATVLogin.png`}
-            alt="ATV — Aumenta Tu Valor"
+            src={LOGO_SRC}
+            alt="Aumenta Tu Valor"
             className={styles.logo}
-            width={32}
-            height={32}
+            width={112}
+            height={36}
           />
         </div>
         <button
@@ -680,69 +672,94 @@ export default function DashboardPage() {
         </section>
 
         <section className={styles.toolbar}>
-          <div className={styles.toolbarLeft}>
-            <label className={styles.searchWrap}>
-              <i className="ti ti-search" />
-              <input
-                type="search"
-                className={styles.searchInput}
-                placeholder="Buscar por nombre, email o teléfono..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </label>
-            <select className={styles.select} value={areaFilter} onChange={(e) => setAreaFilter(e.target.value)}>
-              <option value="">Todas las áreas</option>
-              {areaFilterOptions.map((area) => (
-                <option key={area} value={area}>{area}</option>
-              ))}
-            </select>
-            <select className={styles.select} value={responsableFilter} onChange={(e) => setResponsableFilter(e.target.value)}>
-              <option value="">Todos los responsables</option>
-              <option value="Lucas">Lucas</option>
-              <option value="Jero">Jero</option>
-            </select>
-            <select className={styles.select} value={avatarFilter} onChange={(e) => setAvatarFilter(e.target.value)}>
-              <option value="">Todas las situaciones</option>
-              {avatarFilterOptions.map((avatar) => (
-                <option key={avatar} value={avatar}>{avatar}</option>
-              ))}
-            </select>
-            <select className={styles.select} value={revenueFilter} onChange={(e) => setRevenueFilter(e.target.value)}>
-              <option value="">Todas las facturaciones</option>
-              {revenueFilterOptions.map((revenue) => (
-                <option key={revenue} value={revenue}>{revenue}</option>
-              ))}
-            </select>
-            <label className={styles.dateFilter}>
-              <span className={styles.dateFilterLabel}>Día</span>
-              <input
-                type="date"
-                className={styles.select}
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              />
-            </label>
-            {dateFilter && (
-              <button
-                type="button"
-                className={styles.btnClearDate}
-                onClick={() => setDateFilter('')}
-              >
-                Limpiar día
-              </button>
-            )}
-            <select className={styles.select} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-              <option value="all">Todos</option>
-              <option value="pending">Pendientes</option>
-              <option value="contacted">Contactados</option>
-              <option value="complete">Completos</option>
-              <option value="solo-datos">Solo datos</option>
-              <option value="calificado">Calificados</option>
-              <option value="no-calificado">No calificados</option>
-            </select>
+          <div className={styles.toolbarTop}>
+            <div className={styles.toolbarCol}>
+              <label className={styles.searchWrap}>
+                <i className="ti ti-search" />
+                <input
+                  type="search"
+                  className={styles.searchInput}
+                  placeholder="Buscar por nombre, email o teléfono..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </label>
+            </div>
+            <div className={styles.toolbarCol}>
+              <div className={styles.toolbarFilters}>
+                <div className={styles.filterField}>
+                  <span className={styles.filterLabel}>Área</span>
+                  <select className={styles.select} value={areaFilter} onChange={(e) => setAreaFilter(e.target.value)}>
+                    <option value="">Todos</option>
+                    {areaFilterOptions.map((area) => (
+                      <option key={area} value={area}>{area}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className={styles.filterField}>
+                  <span className={styles.filterLabel}>Responsable</span>
+                  <select className={styles.select} value={responsableFilter} onChange={(e) => setResponsableFilter(e.target.value)}>
+                    <option value="">Todos</option>
+                    <option value="Lucas">Lucas</option>
+                    <option value="Jero">Jero</option>
+                  </select>
+                </div>
+                <div className={styles.filterField}>
+                  <span className={styles.filterLabel}>Avatar</span>
+                  <select className={styles.select} value={avatarFilter} onChange={(e) => setAvatarFilter(e.target.value)}>
+                    <option value="">Todos</option>
+                    {avatarFilterOptions.map((avatar) => (
+                      <option key={avatar} value={avatar}>{avatar}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className={styles.filterField}>
+                  <span className={styles.filterLabel}>Facturación</span>
+                  <select className={styles.select} value={revenueFilter} onChange={(e) => setRevenueFilter(e.target.value)}>
+                    <option value="">Todos</option>
+                    {revenueFilterOptions.map((revenue) => (
+                      <option key={revenue} value={revenue}>{revenue}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className={styles.toolbarCol}>
+              <div className={styles.toolbarFiltersMeta}>
+                <div className={styles.filterField}>
+                  <span className={styles.filterLabel}>Día</span>
+                  <input
+                    type="date"
+                    className={styles.select}
+                    value={dateFilter}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                  />
+                </div>
+                <div className={styles.filterField}>
+                  <span className={styles.filterLabel}>Estado</span>
+                  <select className={styles.select} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                    <option value="all">Todos</option>
+                    <option value="pending">Pendientes</option>
+                    <option value="contacted">Contactados</option>
+                    <option value="complete">Completos</option>
+                    <option value="solo-datos">Solo datos</option>
+                    <option value="calificado">Calificados</option>
+                    <option value="no-calificado">No calificados</option>
+                  </select>
+                </div>
+                {dateFilter && (
+                  <button
+                    type="button"
+                    className={styles.btnClearDate}
+                    onClick={() => setDateFilter('')}
+                  >
+                    Limpiar
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-          <div className={styles.toolbarRight}>
+          <div className={styles.toolbarActions}>
             <span className={styles.leadCount}>{filteredLeads.length} registrados</span>
             <button type="button" className={styles.btnExportEmails} onClick={() => exportEmails(filteredLeads)}>
               <i className="ti ti-mail" />
@@ -782,7 +799,7 @@ export default function DashboardPage() {
                   </tr>
                 ) : (
                   paginatedLeads.map((lead) => (
-                    <tr key={lead.id} onClick={() => openPanel(lead)} style={getRowStyle(lead.calificado)}>
+                    <tr key={lead.id} className={getRowClass(lead.calificado)} onClick={() => openPanel(lead)}>
                       <td className={styles.cellMuted}>{lead.id}</td>
                       <td className={styles.cellName}>{lead.name}</td>
                       <td>
@@ -923,41 +940,45 @@ export default function DashboardPage() {
       {selectedLead && (
         <>
           <button type="button" className={styles.overlay} aria-label="Cerrar panel" onClick={closePanel} />
-          <aside className={styles.panel}>
+          <aside className={`${styles.panel} ${getPanelClass(selectedLead.calificado)}`}>
             <header className={styles.panelHeader}>
               <div>
+                <p className={styles.panelEyebrow}>Registro #{selectedLead.id}</p>
                 <h2 className={styles.panelName}>{selectedLead.name}</h2>
                 <p className={styles.panelDate}>{formatDateFull(selectedLead.created_at)}</p>
               </div>
-              <button type="button" className={styles.panelClose} onClick={closePanel}>
+              <button type="button" className={styles.panelClose} onClick={closePanel} aria-label="Cerrar">
                 <i className="ti ti-x" />
               </button>
             </header>
 
-            <section className={styles.panelSection}>
+            <div className={styles.panelBody}>
+            <section className={styles.panelCard}>
               <h3 className={styles.panelSectionTitle}>Contacto</h3>
-              <a href={`mailto:${selectedLead.email}`} className={styles.panelLink}>
+              <div className={styles.panelContactList}>
+              <a href={`mailto:${selectedLead.email}`} className={styles.panelContactItem}>
                 <i className="ti ti-mail" />
-                {selectedLead.email}
+                <span>{selectedLead.email}</span>
               </a>
-              <a href={buildSetterWhatsappUrl(selectedLead)} target="_blank" rel="noopener noreferrer" className={styles.panelWa}>
+              <a href={buildSetterWhatsappUrl(selectedLead)} target="_blank" rel="noopener noreferrer" className={styles.panelContactItem}>
                 <i className="ti ti-brand-whatsapp" />
-                {selectedLead.phone}
+                <span>{selectedLead.phone}</span>
               </a>
               {selectedLead.ig && (
                 <a
                   href={igToUrl(selectedLead.ig)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={styles.panelLink}
+                  className={styles.panelContactItem}
                 >
                   <i className="ti ti-brand-instagram" />
-                  {selectedLead.ig.startsWith('@') ? selectedLead.ig : `@${selectedLead.ig}`}
+                  <span>{selectedLead.ig.startsWith('@') ? selectedLead.ig : `@${selectedLead.ig}`}</span>
                 </a>
               )}
+              </div>
             </section>
 
-            <section className={styles.panelSection}>
+            <section className={styles.panelCard}>
               <h3 className={styles.panelSectionTitle}>Clave de acceso</h3>
               <div className={styles.panelCodeBlock}>
                 <div className={styles.panelAccessCode}>{selectedLead.access_code}</div>
@@ -966,7 +987,7 @@ export default function DashboardPage() {
                 </p>
                 <div className={styles.codeActions}>
                   <button type="button" className={styles.btnCopyCode} onClick={handleCopyCode}>
-                    {codeCopied ? '✓ COPIADO' : 'COPIAR'}
+                    {codeCopied ? 'Copiado' : 'Copiar'}
                   </button>
                   <button
                     type="button"
@@ -974,7 +995,8 @@ export default function DashboardPage() {
                     onClick={() => setRegenConfirming(true)}
                     disabled={regenLoading || regenConfirming}
                   >
-                    ↺ REGENERAR
+                    <i className="ti ti-refresh" aria-hidden="true" />
+                    Regenerar
                   </button>
                 </div>
                 {regenConfirming && (
@@ -989,7 +1011,7 @@ export default function DashboardPage() {
                         onClick={handleConfirmRegenerar}
                         disabled={regenLoading}
                       >
-                        {regenLoading ? 'GENERANDO...' : 'CONFIRMAR'}
+                        {regenLoading ? 'Generando…' : 'Confirmar'}
                       </button>
                       <button
                         type="button"
@@ -1000,7 +1022,7 @@ export default function DashboardPage() {
                         }}
                         disabled={regenLoading}
                       >
-                        CANCELAR
+                        Cancelar
                       </button>
                     </div>
                   </div>
@@ -1009,20 +1031,22 @@ export default function DashboardPage() {
               </div>
             </section>
 
-            <section className={styles.panelSection}>
+            <section className={styles.panelCard}>
               <h3 className={styles.panelSectionTitle}>Respuestas del quiz</h3>
+              <div className={styles.panelFieldGrid}>
               <div className={styles.quizField}>
-                <span className={styles.quizLabel}>Situación</span>
+                <span className={styles.quizLabel}>Avatar</span>
                 <div className={styles.quizValue}>{selectedLead.avatar || 'Sin completar'}</div>
               </div>
               <div className={styles.quizField}>
                 <span className={styles.quizLabel}>Facturación</span>
                 <div className={styles.quizValue}>{selectedLead.revenue || 'Sin completar'}</div>
               </div>
+              </div>
             </section>
 
             {(selectedLead.bottleneck_areas || []).length > 0 && (
-              <section className={styles.panelSection}>
+              <section className={styles.panelCard}>
                 <h3 className={styles.panelSectionTitle}>Cuello de botella</h3>
                 {(selectedLead.bottleneck_areas || []).map((area) => {
                   const field = AREA_FIELD_MAP[area]
@@ -1043,15 +1067,10 @@ export default function DashboardPage() {
               </section>
             )}
 
-            <section className={styles.panelSection}>
-              <h3 className={styles.panelSectionTitle}>Fecha de registro</h3>
-              <p className={styles.panelMeta}>{formatDateFull(selectedLead.created_at)}</p>
-            </section>
-
-            <section className={styles.panelSection}>
+            <section className={styles.panelCard}>
               <h3 className={styles.panelSectionTitle}>Responsable</h3>
               <select
-                className={styles.select}
+                className={styles.panelSelect}
                 value={selectedLead.responsable || ''}
                 onChange={(e) => handleResponsableChange(e.target.value)}
               >
@@ -1061,7 +1080,7 @@ export default function DashboardPage() {
               </select>
             </section>
 
-            <section className={styles.panelSection}>
+            <section className={styles.panelCard}>
               <h3 className={styles.panelSectionTitle}>Estado</h3>
               <div className={styles.statusBadges}>
                 <TipoLeadBadge lead={selectedLead} />
@@ -1074,7 +1093,7 @@ export default function DashboardPage() {
               </div>
             </section>
 
-            <section className={styles.panelSection}>
+            <section className={styles.panelCard}>
               <h3 className={styles.panelSectionTitle}>Notas internas</h3>
               <textarea
                 className={styles.notesArea}
@@ -1088,7 +1107,7 @@ export default function DashboardPage() {
               </button>
             </section>
 
-            <section className={styles.panelSection}>
+            <section className={`${styles.panelCard} ${styles.panelCardDanger}`}>
               <h3 className={styles.panelSectionTitle}>Eliminar registrado</h3>
               {!deleteConfirming ? (
                 <button
@@ -1098,7 +1117,7 @@ export default function DashboardPage() {
                   disabled={deleteLoading}
                 >
                   <i className="ti ti-trash" />
-                  ELIMINAR REGISTRO
+                  Eliminar registro
                 </button>
               ) : (
                 <div className={styles.deleteConfirmBox}>
@@ -1112,7 +1131,7 @@ export default function DashboardPage() {
                       onClick={handleConfirmDelete}
                       disabled={deleteLoading}
                     >
-                      {deleteLoading ? 'ELIMINANDO...' : 'SÍ, ELIMINAR'}
+                      {deleteLoading ? 'Eliminando…' : 'Sí, eliminar'}
                     </button>
                     <button
                       type="button"
@@ -1123,16 +1142,18 @@ export default function DashboardPage() {
                       }}
                       disabled={deleteLoading}
                     >
-                      CANCELAR
+                      Cancelar
                     </button>
                   </div>
                 </div>
               )}
               {deleteError && <p className={styles.deleteError}>{deleteError}</p>}
             </section>
+            </div>
           </aside>
         </>
       )}
+      </div>
     </div>
   )
 }
