@@ -5,6 +5,11 @@ function field(value, fallback = '-') {
   return text || fallback
 }
 
+function igToUrl(ig) {
+  const handle = (typeof ig === 'string' ? ig : '').trim().replace(/^@/, '')
+  return handle ? `https://instagram.com/${handle}` : null
+}
+
 export function buildWhatsappUrl(data = {}) {
   const areas = []
   if (data.bottleneck_marketing?.length) {
@@ -26,7 +31,8 @@ export function buildWhatsappUrl(data = {}) {
     `DATOS DE CONTACTO\n` +
     `Nombre: ${field(data.name)}\n` +
     `Email: ${field(data.email)}\n` +
-    `WhatsApp: ${field(data.phone)}\n\n` +
+    `WhatsApp: ${field(data.phone)}\n` +
+    `Instagram: ${igToUrl(data.ig) || field(data.ig)}\n\n` +
     `MI SITUACIÓN\n` +
     `Perfil: ${field(data.avatar)}\n` +
     `Facturación mensual: ${field(data.revenue)}\n\n` +
